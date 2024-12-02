@@ -1,0 +1,43 @@
+# copier.yml - Main configuration file for the template
+project_name:
+  type: str
+  help: Name of your UV scripts collection project
+  default: uv-scripts
+
+project_description:
+  type: str
+  help: A short description of your UV scripts collection
+  default: A collection of UV-compatible Python scripts
+
+author_name:
+  type: str
+  help: Your full name
+  default: Your Name
+
+author_email:
+  type: str
+  help: Your email address
+  default: your.email@example.com
+
+github_username:
+  type: str
+  help: Your GitHub username
+  default: username
+
+minimum_python_version:
+  type: str
+  help: Minimum Python version required
+  default: "3.12"
+  choices:
+    - "3.10"
+    - "3.11"
+    - "3.12"
+
+_templates_suffix: ""
+_subdirectory: template
+_tasks:
+  - "mkdir -p .github/workflows"
+  - "mkdir -p .atrium/scripts"
+  - "git init"
+  - "git add ."
+  - "git commit -m 'Initial commit from template'"

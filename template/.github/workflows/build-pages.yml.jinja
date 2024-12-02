@@ -1,0 +1,27 @@
+name: Build and Deploy UV Scripts
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: {{ minimum_python_version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install jinja2
+      - name: Generate static site
+        run: |
+          python .atrium/scripts/generate_index.py
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ "{{ secrets.GITHUB_TOKEN }}" }}
+          publish_dir: .atrium/docs
