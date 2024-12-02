@@ -617,7 +617,7 @@ import subprocess  # For executing commands
 
 mcp = FastMCP("Demo 🚀")
 
-{{ tool_definitions }}
+{{ "{{ tool_definitions }}" }}
 
 if __name__ == "__main__":
     mcp.run()
