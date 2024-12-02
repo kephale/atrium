@@ -500,13 +500,15 @@ def generate_mcp_tool_definitions_with_ast(solutions):
 
         for command in typer_commands:
             command_name = command["command_name"]
+            # Note the double curly braces for escaping
             arg_definitions = ", ".join(
                 f"{arg['name']}: {arg['type']} = {repr(arg['default'])}" if arg["default"] is not None
                 else f"{arg['name']}: {arg['type']}"
                 for arg in command["arguments"]
             )
+            # Note the triple curly braces - one for f-string, two for escaping
             arg_passing = " ".join(
-                f"--{arg['name']} {{{arg['name']}}}" for arg in command["arguments"]
+                f"--{arg['name']} {{{{{arg['name']}}}}}" for arg in command["arguments"]
             )
 
             tool_definition = f"""
@@ -523,9 +525,9 @@ def {sanitized_function_name}_{command_name}({arg_definitions}):
         command = f"uv run {solution['uv_command']} {arg_passing}"
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         if result.returncode != 0:
-            print(f"Command failed with error: {{result.stderr}}")
+            print(f"Command failed with error: {{{{result.stderr}}}}")
         else:
-            print(f"Command output: {{result.stdout.strip()}}")
+            print(f"Command output: {{{{result.stdout.strip()}}}}")
 
     thread = threading.Thread(target=run_command, daemon=True)
     thread.start()
