@@ -21,7 +21,7 @@ INDEX_TEMPLATE = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ site_config.project_name }}</title>
+    <title>Atrium</title>
     <link rel="stylesheet" href="style.css">
     <style>
         body {
@@ -92,7 +92,7 @@ INDEX_TEMPLATE = """
     </style>
 </head>
 <body>
-    <h1>{{ "{{ site_config.project_name }}" }}</h1>
+    <h1>Atrium</h1>
     <div class="grid">
         {% raw %}{% for solution in solutions %}{% endraw %}
         <div class="card">
@@ -216,10 +216,9 @@ SOLUTION_TEMPLATE = """
         <div class="instructions">
             <h2>Run This Solution</h2>
             <p>To run this script, use the following command with UV:</p>
-            <code>uv run {{ "{{ site_config.base_url }}" }}/{{ "{{ link }}" }}</code>
-            <span class="copy-icon" onclick="copyToClipboard('uv run {{ "{{ site_config.base_url }}" }}/{{ "{{ link }}" }}')">Copy</span>
+            <code>uv run {{ "{{ link }}" }}</code>
+            <span class="copy-icon" onclick="copyToClipboard('uv run {{ "{{ link }}" }}')">Copy</span>
         </div>
-
         <div class="metadata">
             <table>
                 {% raw %}{% for key, value in metadata.items() %}{% endraw %}
@@ -230,10 +229,9 @@ SOLUTION_TEMPLATE = """
                 {% raw %}{% endfor %}{% endraw %}
                 <tr>
                     <th><strong>Source File:</strong></th>
-                    <td><a href="{{ "{{ site_config.base_url }}" }}/blob/main/{{ "{{ link }}" }}" target="_blank">View on GitHub</a></td>
+                    <td><a href="blob/main/{{ "{{ link }}" }}" target="_blank">View on GitHub</a></td>
                 </tr>
             </table>
-            
         </div>
         {% raw %}{% if repository %}{% endraw %}
         <p><strong>Repository:</strong> <a href="{{ "{{ repository }}" }}" target="_blank">{{ "{{ repository }}" }}</a></p>
