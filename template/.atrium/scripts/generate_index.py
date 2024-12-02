@@ -460,22 +460,14 @@ def extract_typer_commands_with_ast(file_path):
 def generate_mcp_tool_definitions_with_ast(solutions):
     """
     Generate mcp.tool definitions based on Typer commands discovered via AST.
-
-    Args:
-        solutions (list): List of solutions with metadata.
-
-    Returns:
-        str: Generated MCP tool definitions.
     """
     tool_definitions = []
     base_url = SITE_CONFIG['base_url']
 
     for solution in solutions:
-        # Use base_url from config instead of hardcoded URL
         solution_dir = os.path.dirname(solution["uv_command"].replace(f"{base_url}/", ""))
         solution_path = os.path.join(BASE_DIR, solution_dir)
 
-        # Find the latest Python file
         python_files = sorted(
             [f for f in os.listdir(solution_path) if f.endswith(".py")],
             reverse=True,
@@ -486,53 +478,44 @@ def generate_mcp_tool_definitions_with_ast(solutions):
 
         latest_python_file = os.path.join(solution_path, python_files[0])
 
-        # Extract metadata
         metadata = extract_metadata(latest_python_file)
         script_title = metadata.get("title", "Untitled Script")
         script_description = metadata.get("description", "No description provided.")
 
-        # Extract the sanitized function name from the <solution_name>
         solution_name = os.path.basename(solution_dir)
         sanitized_function_name = sanitize_function_name(solution_name)
 
-        # Extract Typer commands using AST
         typer_commands = extract_typer_commands_with_ast(latest_python_file)
 
         for command in typer_commands:
             command_name = command["command_name"]
-            # Note the double curly braces for escaping
-            arg_definitions = ", ".join(
+            tool_definition = """
+{% raw %}
+@mcp.tool()
+def """ + f"{sanitized_function_name}_{command_name}" + """(""" + ", ".join(
                 f"{arg['name']}: {arg['type']} = {repr(arg['default'])}" if arg["default"] is not None
                 else f"{arg['name']}: {arg['type']}"
                 for arg in command["arguments"]
-            )
-            # Note the triple curly braces - one for f-string, two for escaping
-            arg_passing = " ".join(
-                f"--{arg['name']} {{{{{arg['name']}}}}}" for arg in command["arguments"]
-            )
-
-            tool_definition = f"""
-@mcp.tool()
-def {sanitized_function_name}_{command_name}({arg_definitions}):
-    \"\"\"{script_title}
-
-    {script_description}
-    \"\"\"
+            ) + """):
+    \"\"\"""" + f"{script_title}\n\n    {script_description}" + """\"\"\"
     import subprocess
     import threading
 
     def run_command():
-        command = f"uv run {solution['uv_command']} {arg_passing}"
+        command = f"uv run """ + f"{solution['uv_command']}" + " " + " ".join(
+                f"--{arg['name']} {{{arg['name']}}}"
+                for arg in command["arguments"]
+            ) + """\"
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         if result.returncode != 0:
-            print(f"Command failed with error: {{{{result.stderr}}}}")
+            print(f"Command failed with error: {result.stderr}")
         else:
-            print(f"Command output: {{{{result.stdout.strip()}}}}")
+            print(f"Command output: {result.stdout.strip()}")
 
     thread = threading.Thread(target=run_command, daemon=True)
     thread.start()
     return "Command is running in the background."
-"""
+{% endraw %}"""
             tool_definitions.append(tool_definition)
 
     return "\n".join(tool_definitions)
