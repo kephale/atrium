@@ -92,28 +92,27 @@ INDEX_TEMPLATE = """
     </style>
 </head>
 <body>
-    <h1>Atrium</h1>
+    <h1>{{ "{{ site_config.project_name }}" }}</h1>
     <div class="grid">
-        {% for solution in solutions %}
+        {% raw %}{% for solution in solutions %}{% endraw %}
         <div class="card">
-            {% if solution.cover %}
-            <img src="{{ solution.cover }}" alt="{{ solution.name }}">
-            {% endif %}
-            <h2><a href="{{ solution.link }}">{{ solution.name }}</a></h2>
-            <p>{{ solution.description }}</p>
+            {% raw %}{% if solution.cover %}{% endraw %}
+            <img src="{{ "{{ solution.cover }}" }}" alt="{{ "{{ solution.name }}" }}">
+            {% raw %}{% endif %}{% endraw %}
+            <h2><a href="{{ "{{ solution.link }}" }}">{{ "{{ solution.name }}" }}</a></h2>
+            <p>{{ "{{ solution.description }}" }}</p>
         </div>
-        {% endfor %}
+        {% raw %}{% endfor %}{% endraw %}
     </div>
 </body>
 </html>
-
 """
 
 SOLUTION_TEMPLATE = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ title }}</title>
+    <title>{{ "{{ title }}" }}</title>
     <link rel="stylesheet" href="../../style.css">
     <style>
         body {
@@ -204,46 +203,46 @@ SOLUTION_TEMPLATE = """
 </head>
 <body>
     <header>
-        <h1>{{ title }}</h1>
+        <h1>{{ "{{ title }}" }}</h1>
         <p style="text-align: center; margin-top: 10px;">
             <a href="../../index.html">Back to Overview</a>
         </p>
     </header>
     <div class="container">
-        {% if cover %}
-        <img src="{{ cover }}" alt="{{ title }}" class="cover">
-        {% endif %}
+        {% raw %}{% if cover %}{% endraw %}
+        <img src="{{ "{{ cover }}" }}" alt="{{ "{{ title }}" }}" class="cover">
+        {% raw %}{% endif %}{% endraw %}
 
         <div class="instructions">
             <h2>Run This Solution</h2>
             <p>To run this script, use the following command with UV:</p>
-            <code>uv run {{ site_config.base_url }}/{{ link }}</code>
-            <span class="copy-icon" onclick="copyToClipboard('uv run {{ site_config.base_url }}/{{ link }}')">Copy</span>
+            <code>uv run {{ "{{ site_config.base_url }}" }}/{{ "{{ link }}" }}</code>
+            <span class="copy-icon" onclick="copyToClipboard('uv run {{ "{{ site_config.base_url }}" }}/{{ "{{ link }}" }}')">Copy</span>
         </div>
 
         <div class="metadata">
             <table>
-                {% for key, value in metadata.items() %}
+                {% raw %}{% for key, value in metadata.items() %}{% endraw %}
                 <tr>
-                    <th>{{ key }}</th>
-                    <td>{{ value }}</td>
+                    <th>{{ "{{ key }}" }}</th>
+                    <td>{{ "{{ value }}" }}</td>
                 </tr>
-                {% endfor %}
+                {% raw %}{% endfor %}{% endraw %}
                 <tr>
                     <th><strong>Source File:</strong></th>
-                    <td><a href="{{ site_config.base_url }}/blob/main/{{ link }}" target="_blank">View on GitHub</a></td>
+                    <td><a href="{{ "{{ site_config.base_url }}" }}/blob/main/{{ "{{ link }}" }}" target="_blank">View on GitHub</a></td>
                 </tr>
             </table>
             
         </div>
-        {% if repository %}
-        <p><strong>Repository:</strong> <a href="{{ repository }}" target="_blank">{{ repository }}</a></p>
-        {% endif %}
+        {% raw %}{% if repository %}{% endraw %}
+        <p><strong>Repository:</strong> <a href="{{ "{{ repository }}" }}" target="_blank">{{ "{{ repository }}" }}</a></p>
+        {% raw %}{% endif %}{% endraw %}
         <p><strong>Download Python Files:</strong></p>
         <ul>
-            {% for file in metadata.files %}
-            <li><a href="{{ file }}" download>{{ file }}</a></li>
-            {% endfor %}
+            {% raw %}{% for file in metadata.files %}{% endraw %}
+            <li><a href="{{ "{{ file }}" }}" download>{{ "{{ file }}" }}</a></li>
+            {% raw %}{% endfor %}{% endraw %}
         </ul>
     </div>
 </body>
