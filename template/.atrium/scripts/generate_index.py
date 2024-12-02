@@ -557,13 +557,13 @@ def generate_static_site(base_dir, static_dir):
                     base_url = SITE_CONFIG['base_url']
                     solution_metadata = {
                         "name": solution_name,
-                        "function_name": sanitized_function_name,  # Use the sanitized name
+                        "function_name": sanitized_function_name,
                         "description": metadata.get("description", "No description provided."),
                         "link": f"{entry.name}/{solution_name}/{most_recent_file}",
-                        "cover": cover_relative_path,  # For the main index
-                        "cover_solution": cover_solution_page,  # For the solution page
+                        "cover": cover_relative_path,
+                        "cover_solution": cover_solution_page,
                         "repository": metadata.get("repository", ""),
-                        "author": metadata.get("author", ""),  # Fetch author if available
+                        "author": metadata.get("author", ""),
 
                         "uv_command": f"{base_url}/{entry.name}/{solution_name}/{most_recent_file}",
                     }
@@ -572,20 +572,24 @@ def generate_static_site(base_dir, static_dir):
                     solution_output = os.path.join(group_path, solution_name)
                     copy_files(solution_entry.path, solution_output, extensions=[".py", ".png"])
 
-                    # Generate solution page
+                    # Generate solution page with site_config
                     with open(os.path.join(solution_output, "index.html"), "w") as f:
                         f.write(Template(SOLUTION_TEMPLATE).render(
                             title=solution_metadata["name"],
-                            cover=solution_metadata["cover_solution"],  # Use `cover_solution` here
+                            cover=solution_metadata["cover_solution"],
                             metadata=format_metadata(metadata),
                             repository=solution_metadata["repository"],
                             link=f"{entry.name}/{solution_name}/{most_recent_file}",
+                            site_config=SITE_CONFIG  # Pass site_config here
                         ))
                     solutions.append(solution_metadata)
 
-    # Generate the main index
+    # Generate the main index with site_config
     with open(os.path.join(static_dir, "index.html"), "w") as f:
-        f.write(Template(INDEX_TEMPLATE).render(solutions=solutions))
+        f.write(Template(INDEX_TEMPLATE).render(
+            solutions=solutions,
+            site_config=SITE_CONFIG  # Pass site_config here
+        ))
     
     # Generate the sitemap.txt
     generate_sitemap_txt(solutions, static_dir)
