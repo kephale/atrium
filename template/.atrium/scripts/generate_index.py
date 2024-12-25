@@ -6,6 +6,7 @@ from jinja2 import Template
 import importlib.util
 from typer.main import get_command
 import ast
+import urllib
 
 # Import site configuration
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
