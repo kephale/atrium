@@ -1,7 +1,3 @@
-[% if include_example_script %]
-================
-File: template/example/hello-world/0.1.0.py
-================
 # /// script
 # title = "Hello World"
 # description = "A simple example script that prints a greeting"
@@ -37,4 +33,3 @@ def greet(
 
 if __name__ == "__main__":
     app()
-[% endif %]

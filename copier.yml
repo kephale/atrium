@@ -32,39 +32,39 @@ minimum_python_version:
     - "3.11"
     - "3.12"
 
-include_example_script:
-  type: bool
-  help: Include a hello world example script
-  default: true
+# include_example_script:
+#   type: bool
+#   help: Include a hello world example script
+#   default: true
 
-include_remote_script:
-  type: bool
-  help: Include an example of referencing an external script
-  default: true
+# include_remote_script:
+#   type: bool
+#   help: Include an example of referencing an external script
+#   default: true
 
 _templates_suffix: ""
 _subdirectory: template
 
 # Explicitly specify binary files
 _binary_files:
-  - "example/hello-world/cover.png"
+  - "template/example/hello-world/cover.png"
 
 _tasks:
   - "mkdir -p .github/workflows"
   - "mkdir -p .atrium/scripts"
   - '[ "{{ include_example_script }}" = "true" ] && mkdir -p example/hello-world || true'
   - '[ "{{ include_remote_script }}" = "true" ] && mkdir -p example/external-script || true'
-  - '[ "{{ include_example_script }}" = "true" ] && cp -f "{{ _src_path }}/example/hello-world/cover.png" "example/hello-world/cover.png" || true'
+  - '[ "{{ include_example_script }}" = "true" ] && cp -f "{{ _src_path }}/template/example/hello-world/cover.png" "example/hello-world/cover.png" || true'
   - "git init"
   - "git add ."
   - 'git diff --quiet && git diff --staged --quiet || git commit -m "Initial commit from template"'
 
-_migrations:
-  - version: "1.0.0"
-    before: |
-      # This migration ensures backward compatibility
-      data.setdefault('include_example_script', True)
-      data.setdefault('include_remote_script', True)
+# _migrations:
+#   - version: "1.0.0"
+#     before: |
+#       # This migration ensures backward compatibility
+#       data.setdefault('include_example_script', True)
+#       data.setdefault('include_remote_script', True)
 
 # Don't exclude any files
 _exclude: []
