@@ -52,7 +52,7 @@ _tasks:
   - '[ "{{ include_example_script }}" = "true" ] && cp template/example/hello-world/cover.png example/hello-world/ || true'
   - "git init"
   - "git add ."
-  - "git commit -m 'Initial commit from template'"
+  - 'git diff --quiet && git diff --staged --quiet || git commit -m "Initial commit from template"'
 
 _migrations:
   - version: "1.0.0"
