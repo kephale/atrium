@@ -259,11 +259,11 @@ INDEX_TEMPLATE = """
 
 SOLUTION_TEMPLATE = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ "{{ title }}" }} - Atrium</title>
+    <title>{{ title }} - Atrium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -275,6 +275,7 @@ SOLUTION_TEMPLATE = """
             --text-secondary: #64748b;
             --border-color: #e2e8f0;
             --code-background: #f1f5f9;
+            --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         @media (prefers-color-scheme: dark) {
@@ -297,7 +298,7 @@ SOLUTION_TEMPLATE = """
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--background-color);
             color: var(--text-primary);
             line-height: 1.6;
@@ -305,34 +306,23 @@ SOLUTION_TEMPLATE = """
 
         .header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 2rem;
+            padding: 2.5rem 1rem;
             color: white;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
         }
 
-        .nav-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .nav-link {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: background-color 0.2s ease;
-        }
-
-        .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+        .nav-bar {
+            background-color: var(--card-background);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .container {
@@ -341,55 +331,82 @@ SOLUTION_TEMPLATE = """
             padding: 2rem;
         }
 
-        .cover-image {
-            width: 100%;
-            max-width: 800px;
-            margin: 2rem auto;
-            border-radius: 1rem;
-            display: block;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            gap: 0.5rem;
+            font-size: 0.95rem;
         }
 
-        .section {
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+
+        .script-section {
             background: var(--card-background);
             border-radius: 1rem;
             padding: 2rem;
-            margin-bottom: 2rem;
+            margin: 2rem 0;
             border: 1px solid var(--border-color);
         }
 
-        .section h2 {
-            color: var(--text-primary);
-            margin-bottom: 1rem;
+        .script-header {
+            margin-bottom: 2rem;
+        }
+
+        .script-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .script-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .meta-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            color: var(--text-secondary);
         }
 
-        .code-block {
+        .command-section {
             background: var(--code-background);
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: 0.5rem;
-            margin: 1rem 0;
+            margin: 2rem 0;
             position: relative;
         }
 
-        .code-block code {
-            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+        .command-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
             color: var(--text-primary);
-            display: block;
-            white-space: pre-wrap;
+        }
+
+        .command-box {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            margin-bottom: 0.5rem;
+            overflow-x: auto;
         }
 
         .copy-button {
             position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
+            top: 1rem;
+            right: 1rem;
             background: var(--primary-color);
             color: white;
             border: none;
             padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
+            border-radius: 0.5rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -401,58 +418,52 @@ SOLUTION_TEMPLATE = """
             background: var(--secondary-color);
         }
 
-        .metadata-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
+        .description-section {
+            margin: 2rem 0;
         }
 
-        .metadata-item {
-            background: var(--background-color);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .metadata-item h3 {
-            color: var(--text-primary);
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .metadata-item p {
+        .description-content {
             color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .dependencies-section {
+            margin: 2rem 0;
+        }
+
+        .dependencies-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .dependency-item {
+            background: var(--code-background);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
             font-size: 0.9rem;
         }
 
-        .external-source {
-            background: var(--background-color);
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            margin-top: 2rem;
-            border: 1px solid var(--border-color);
+        .source-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
         }
 
-        .external-source h3 {
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .external-source a {
-            color: var(--primary-color);
-            text-decoration: none;
+        .source-link {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
         }
 
-        .external-source a:hover {
+        .source-link:hover {
             text-decoration: underline;
         }
 
@@ -461,54 +472,119 @@ SOLUTION_TEMPLATE = """
                 padding: 1rem;
             }
             
-            .metadata-grid {
-                grid-template-columns: 1fr;
+            .script-section {
+                padding: 1.5rem;
             }
             
-            .header h1 {
-                font-size: 1.5rem;
+            .script-title {
+                font-size: 1.75rem;
+            }
+            
+            .script-meta {
+                gap: 1rem;
+            }
+            
+            .command-section {
+                padding: 1rem;
+            }
+            
+            .copy-button {
+                position: static;
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>{{ "{{ title }}" }}</h1>
-        <div class="navigation">
-            <a href="../../index.html">Back to Overview</a>
-        </div>
+    <header class="header">
+        <h1>{{ title }}</h1>
     </header>
-    <div class="container">
-        {% raw %}{% if cover %}{% endraw %}
-        <img src="{{ "{{ cover }}" }}" alt="{{ "{{ title }}" }}" class="cover">
-        {% raw %}{% endif %}{% endraw %}
 
-        <div class="execution-command">
-            <h2>Run This Script</h2>
-            <code>uv run {{ "{{ script_source }}" }}</code>
-            <button id="copyButton" class="copy-button" onclick="copyToClipboard('uv run {{ "{{ script_source }}" }}')">
-                Copy Command
-            </button>
+    <nav class="nav-bar">
+        <div class="container">
+            <a href="../index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Scripts
+            </a>
         </div>
+    </nav>
 
-        <div class="metadata-section">
-            <div class="metadata-grid">
-                {% raw %}{% for key, value in metadata.items() %}{% endraw %}
-                <div class="metadata-item">
-                    <h3>{{ "{{ key }}" }}</h3>
-                    <p>{{ "{{ value }}" }}</p>
+    <main class="container">
+        <section class="script-section">
+            <div class="script-header">
+                <h1 class="script-title">{{ title }}</h1>
+                <div class="script-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-code-branch"></i>
+                        <span>Version {{ version }}</span>
+                    </div>
+                    {% if author %}
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>{{ author }}</span>
+                    </div>
+                    {% endif %}
+                    {% if license %}
+                    <div class="meta-item">
+                        <i class="fas fa-balance-scale"></i>
+                        <span>{{ license }}</span>
+                    </div>
+                    {% endif %}
                 </div>
-                {% raw %}{% endfor %}{% endraw %}
             </div>
-        </div>
 
-        {% raw %}{% if external_source %}{% endraw %}
-        <div class="external-source">
-            <h3>External Source</h3>
-            <p>This script is sourced from: <a href="{{ "{{ external_source }}" }}" target="_blank">{{ "{{ external_source }}" }}</a></p>
-        </div>
-        {% raw %}{% endif %}{% endraw %}
-    </div>
+            <div class="command-section">
+                <h2 class="command-title">Run this script</h2>
+                <div class="command-box">
+                    <code>uv run {{ script_source }}</code>
+                </div>
+                <button class="copy-button" onclick="copyCommand()">
+                    <i class="fas fa-copy"></i>
+                    Copy Command
+                </button>
+            </div>
+
+            <div class="description-section">
+                <p class="description-content">{{ description }}</p>
+            </div>
+
+            {% if dependencies %}
+            <div class="dependencies-section">
+                <h2>Dependencies</h2>
+                <ul class="dependencies-list">
+                    {% for dependency in dependencies %}
+                    <li class="dependency-item">{{ dependency }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if external_source %}
+            <div class="source-section">
+                <a href="{{ external_source }}" target="_blank" class="source-link">
+                    <i class="fas fa-external-link-alt"></i>
+                    View Source
+                </a>
+            </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <script>
+        function copyCommand() {
+            const command = document.querySelector('.command-box code').textContent;
+            navigator.clipboard.writeText(command).then(() => {
+                const button = document.querySelector('.copy-button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>
 """
