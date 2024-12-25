@@ -54,8 +54,7 @@ _tasks:
   - "mkdir -p .atrium/scripts"
   - '[ "{{ include_example_script }}" = "true" ] && mkdir -p example/hello-world || true'
   - '[ "{{ include_remote_script }}" = "true" ] && mkdir -p example/external-script || true'
-  # Create a more robust copy command for the cover image
-  - '[ "{{ include_example_script }}" = "true" ] && cp -f "{{ _src_path }}/example/hello-world/cover.png" "example/hello-world/cover.png" 2>/dev/null || true'
+  - '[ "{{ include_example_script }}" = "true" ] && cp -f "{{ _src_path }}/example/hello-world/cover.png" "example/hello-world/cover.png" || true'
   - "git init"
   - "git add ."
   - 'git diff --quiet && git diff --staged --quiet || git commit -m "Initial commit from template"'
