@@ -2,6 +2,8 @@
 
 A template for creating collections of UV-compatible Python scripts with automatic documentation generation and deployment.
 
+![Screenshot of an atrium repository](./screenshot.png)
+
 ## Features
 
 - 🚀 Automatic documentation generation
