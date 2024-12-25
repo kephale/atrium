@@ -257,14 +257,16 @@ INDEX_TEMPLATE = """
             {%- raw -%}
             {% for solution in solutions %}
             <div class="card">
-                {% if solution.cover %}
-                <img class="card-image" src="{{ solution.cover }}" alt="{{ solution.name }}">
-                {% endif %}
                 
                 <div class="card-content">
                     <a href="{{ solution.link }}/index.html" class="card-title">
                         <h2>{{ solution.name }}</h2>
                     </a>
+
+                    {% if solution.cover %}
+                    <img class="card-image" src="{{ solution.cover }}" alt="{{ solution.name }}">
+                    {% endif %}
+
                     
                     <div class="card-metadata">
                         {% if solution.author %}

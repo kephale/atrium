@@ -49,6 +49,7 @@ _tasks:
   - "mkdir -p .atrium/scripts"
   - '[ "{{ include_example_script }}" = "true" ] && mkdir -p example/hello-world || true'
   - '[ "{{ include_remote_script }}" = "true" ] && mkdir -p example/external-script || true'
+  - '[ "{{ include_example_script }}" = "true" ] && cp template/example/hello-world/cover.png example/hello-world/ || true'
   - "git init"
   - "git add ."
   - "git commit -m 'Initial commit from template'"
@@ -59,3 +60,6 @@ _migrations:
       # This migration ensures backward compatibility
       data.setdefault('include_example_script', True)
       data.setdefault('include_remote_script', True)
+
+_exclude:
+  - "!example/hello-world/cover.png"
