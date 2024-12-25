@@ -518,28 +518,22 @@ def extract_typer_commands_with_ast(file_path):
     return commands
 
 def generate_mcp_tool_definitions_with_ast(solutions):
-    """
-    Generate mcp.tool definitions based on Typer commands discovered via AST.
-    """
     tool_definitions = []
     base_url = SITE_CONFIG['base_url']
 
     for solution in solutions:
-        # Handle external scripts differently
         if 'external_source' in solution and solution['external_source']:
-            # For external scripts, we'll create a simple wrapper that downloads and runs the script
             solution_name = os.path.basename(os.path.dirname(solution['link']))
             sanitized_function_name = sanitize_function_name(solution_name)
             
-            tool_definition = f"""
-{{% raw %}}
+            tool_definition = f'''
 @mcp.tool()
 def {sanitized_function_name}_run():
-    \"\"\"
+    """
     Run external script: {solution['name']}
     
     This script is sourced from: {solution['external_source']}
-    \"\"\"
+    """
     import subprocess
     import threading
     import tempfile
@@ -561,11 +555,10 @@ def {sanitized_function_name}_run():
     thread = threading.Thread(target=run_command, daemon=True)
     thread.start()
     return "Command is running in the background."
-{{% endraw %}}"""
+'''
             tool_definitions.append(tool_definition)
             continue
 
-        # For local scripts, use the existing logic
         solution_dir = os.path.dirname(solution["uv_command"].replace(f"{base_url}/", ""))
         solution_path = os.path.join(BASE_DIR, solution_dir)
         
@@ -595,33 +588,37 @@ def {sanitized_function_name}_run():
 
             for command in typer_commands:
                 command_name = command["command_name"]
-                tool_definition = """
-{% raw %}
-@mcp.tool()
-def """ + f"{sanitized_function_name}_{command_name}" + """(""" + ", ".join(
+                args_str = ", ".join(
                     f"{arg['name']}: {arg['type']} = {repr(arg['default'])}" if arg["default"] is not None
                     else f"{arg['name']}: {arg['type']}"
                     for arg in command["arguments"]
-                ) + """):
-    \"\"\"""" + f"{script_title}\n\n    {script_description}" + """\"\"\"
+                )
+                args_cmd_str = " ".join(
+                    f"--{arg['name']} {{{arg['name']}}}"
+                    for arg in command["arguments"]
+                )
+                
+                tool_definition = f'''
+@mcp.tool()
+def {sanitized_function_name}_{command_name}({args_str}):
+    """{script_title}
+
+    {script_description}"""
     import subprocess
     import threading
 
     def run_command():
-        command = f"uv run """ + f"{solution['uv_command']}" + " " + " ".join(
-                    f"--{arg['name']} {{{arg['name']}}}"
-                    for arg in command["arguments"]
-                ) + """\"
+        command = f"uv run {solution['uv_command']} {args_cmd_str}"
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         if result.returncode != 0:
-            print(f"Command failed with error: {result.stderr}")
+            print(f"Command failed with error: {{result.stderr}}")
         else:
-            print(f"Command output: {result.stdout.strip()}")
+            print(f"Command output: {{result.stdout.strip()}}")
 
     thread = threading.Thread(target=run_command, daemon=True)
     thread.start()
     return "Command is running in the background."
-{% endraw %}"""
+'''
                 tool_definitions.append(tool_definition)
         except Exception as e:
             print(f"Error processing {latest_python_file}: {e}")
