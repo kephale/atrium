@@ -635,6 +635,29 @@ SOLUTION_TEMPLATE = """
             font-size: 0.875rem;
             color: var(--text-primary);
         }
+
+        .cover-image-container {
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card-image {
+            width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: block;  /* Ensure image is block-level */
+            margin: 0 auto;  /* Center the image */
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .card-image {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+            }
+        }        
     </style>
 </head>
 <body>
@@ -656,9 +679,13 @@ SOLUTION_TEMPLATE = """
             <div class="script-header">
                 <h1 class="script-title">{{ '{{ title }}' }}</h1>
                 
+                {%- raw -%}
                 {% if cover_image %}
-                <img src="{{ cover_image }}" alt="{{ title }} cover image" class="card-image">
+                <div class="cover-image-container">
+                    <img src="{{ cover_image }}" alt="{{ title }} cover image" class="card-image">
+                </div>
                 {% endif %}
+                {%- endraw -%}
 
                 <div class="description-section">
                     <p class="description-content">{{ description }}</p>
@@ -917,10 +944,16 @@ def copy_files(source_dir, target_dir, extensions=None):
     if extensions is None:
         extensions = []
     os.makedirs(target_dir, exist_ok=True)
+    
+    # Add debug logging
+    print(f"Debug: Copying files from {source_dir} to {target_dir}")
+    print(f"Debug: Looking for extensions: {extensions}")
+    
     for file_name in os.listdir(source_dir):
         if any(file_name.endswith(ext) for ext in extensions):
             source_path = os.path.join(source_dir, file_name)
             target_path = os.path.join(target_dir, file_name)
+            print(f"Debug: Copying {source_path} to {target_path}")
             shutil.copy2(source_path, target_path)
 
 def format_metadata(metadata):
