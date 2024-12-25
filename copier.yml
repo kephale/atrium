@@ -45,23 +45,20 @@ include_remote_script:
 _templates_suffix: ""
 _subdirectory: template
 
-# Explicitly declare binary files
-_files_lower: true
+# Explicitly specify binary files
 _binary_files:
   - "example/hello-world/cover.png"
 
 _tasks:
   - "mkdir -p .github/workflows"
-  - "mkdir -p .atrium/scripts" 
+  - "mkdir -p .atrium/scripts"
   - '[ "{{ include_example_script }}" = "true" ] && mkdir -p example/hello-world || true'
   - '[ "{{ include_remote_script }}" = "true" ] && mkdir -p example/external-script || true'
-  - '[ "{{ include_example_script }}" = "true" ] && cp template/example/hello-world/cover.png example/hello-world/ || true'
+  # Create a more robust copy command for the cover image
+  - '[ "{{ include_example_script }}" = "true" ] && cp -f "{{ _src_path }}/example/hello-world/cover.png" "example/hello-world/cover.png" 2>/dev/null || true'
   - "git init"
   - "git add ."
   - 'git diff --quiet && git diff --staged --quiet || git commit -m "Initial commit from template"'
-
-# Instead of using !example/hello-world/cover.png
-_exclude: []
 
 _migrations:
   - version: "1.0.0"
@@ -69,3 +66,6 @@ _migrations:
       # This migration ensures backward compatibility
       data.setdefault('include_example_script', True)
       data.setdefault('include_remote_script', True)
+
+# Don't exclude any files
+_exclude: []
