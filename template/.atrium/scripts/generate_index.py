@@ -569,11 +569,6 @@ def generate_static_site(base_dir, static_dir):
                         with urlopen(metadata["external_source"]) as response:
                             external_content = response.read().decode('utf-8')
                             with open(output_path, 'w') as f:
-                                f.write('# /// script\n')
-                                for key in ['title', 'description', 'version']:
-                                    if key in metadata:
-                                        f.write(f'# {key} = "{metadata[key]}"\n')
-                                f.write('# ///\n\n')
                                 f.write(external_content)
                     else:
                         # Copy non-external solution files and cover image
