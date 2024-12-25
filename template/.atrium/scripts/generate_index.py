@@ -56,7 +56,8 @@ INDEX_TEMPLATE = """
             background: #fff;
             transition: transform 0.2s, box-shadow 0.2s;
             overflow: hidden;
-            text-align: center;
+            text-align: left;
+            padding: 15px;
         }
         .card:hover {
             transform: translateY(-5px);
@@ -65,22 +66,27 @@ INDEX_TEMPLATE = """
         .card img {
             width: 100%;
             height: auto;
-            border-bottom: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
         }
         .card h2 {
-            font-size: 1.6em;
-            margin: 15px 10px 5px;
+            font-size: 1.4em;
+            margin: 0 0 10px 0;
             color: #333;
         }
-        .card .author {
-            font-size: 1em;
+        .card .metadata {
+            font-size: 0.9em;
             color: #666;
             margin: 5px 0;
+        }
+        .card .metadata span {
+            display: block;
+            margin-bottom: 5px;
         }
         .card p {
             font-size: 0.9em;
             color: #555;
-            margin: 10px 15px 20px;
+            margin: 10px 0;
         }
         .card a {
             text-decoration: none;
@@ -90,6 +96,13 @@ INDEX_TEMPLATE = """
         }
         .card a:hover {
             color: #0056b3;
+        }
+        .external-source {
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.85em;
         }
     </style>
 </head>
@@ -101,8 +114,21 @@ INDEX_TEMPLATE = """
             {% raw %}{% if solution.cover %}{% endraw %}
             <img src="{{ "{{ solution.cover }}" }}" alt="{{ "{{ solution.name }}" }}">
             {% raw %}{% endif %}{% endraw %}
-            <h2><a href="{{ "{{ solution.link }}" }}">{{ "{{ solution.name }}" }}</a></h2>
+            <h2><a href="{{ "{{ solution.link }}" }}/index.html">{{ "{{ solution.name }}" }}</a></h2>
+            <div class="metadata">
+                {% raw %}{% if solution.author %}{% endraw %}
+                <span>Author: {{ "{{ solution.author }}" }}</span>
+                {% raw %}{% endif %}{% endraw %}
+                {% raw %}{% if solution.version %}{% endraw %}
+                <span>Version: {{ "{{ solution.version }}" }}</span>
+                {% raw %}{% endif %}{% endraw %}
+            </div>
             <p>{{ "{{ solution.description }}" }}</p>
+            {% raw %}{% if solution.external_source %}{% endraw %}
+            <div class="external-source">
+                Source: <a href="{{ "{{ solution.external_source }}" }}" target="_blank">{{ "{{ solution.external_source }}" }}</a>
+            </div>
+            {% raw %}{% endif %}{% endraw %}
         </div>
         {% raw %}{% endfor %}{% endraw %}
     </div>
@@ -128,13 +154,13 @@ SOLUTION_TEMPLATE = """
             width: 80%;
             margin: auto;
             overflow: hidden;
+            padding-bottom: 40px;
         }
         header {
             background: #333;
             color: #fff;
-            padding-top: 10px;
-            min-height: 70px;
-            border-bottom: #0779e4 3px solid;
+            padding: 20px 0;
+            margin-bottom: 30px;
         }
         header h1 {
             text-align: center;
@@ -145,60 +171,90 @@ SOLUTION_TEMPLATE = """
             display: block;
             margin: 20px auto;
             max-width: 80%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        .metadata {
+        .execution-command {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+        .execution-command code {
+            display: block;
             background: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #e9ecef;
+            font-family: monospace;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table th, table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .instructions {
-            background: #eef7ff;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .instructions code {
-            display: inline-block;
-            background: #f8f8f8;
-            padding: 10px;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        .copy-icon {
-            cursor: pointer;
-            padding: 5px;
-            background: #007BFF;
+        .copy-button {
+            background: #007bff;
             color: white;
-            border-radius: 3px;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
             font-size: 14px;
-            vertical-align: middle;
         }
-        a {
-            color: #0779e4;
+        .copy-button:hover {
+            background: #0056b3;
+        }
+        .metadata-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .metadata-item {
+            margin-bottom: 15px;
+        }
+        .metadata-item h3 {
+            margin: 0 0 5px 0;
+            color: #495057;
+            font-size: 16px;
+        }
+        .metadata-item p {
+            margin: 0;
+            color: #6c757d;
+        }
+        .external-source {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .navigation a {
+            color: #fff;
             text-decoration: none;
+            padding: 5px 15px;
+            border-radius: 4px;
+            transition: opacity 0.2s;
         }
-        a:hover {
-            text-decoration: underline;
+        .navigation a:hover {
+            opacity: 0.8;
         }
     </style>
     <script>
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                alert("Copied to clipboard!");
+                const copyButton = document.getElementById('copyButton');
+                copyButton.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy Command';
+                }, 2000);
             });
         }
     </script>
@@ -206,44 +262,40 @@ SOLUTION_TEMPLATE = """
 <body>
     <header>
         <h1>{{ "{{ title }}" }}</h1>
-        <p style="text-align: center; margin-top: 10px;">
+        <div class="navigation">
             <a href="../../index.html">Back to Overview</a>
-        </p>
+        </div>
     </header>
     <div class="container">
         {% raw %}{% if cover %}{% endraw %}
         <img src="{{ "{{ cover }}" }}" alt="{{ "{{ title }}" }}" class="cover">
         {% raw %}{% endif %}{% endraw %}
 
-        <div class="instructions">
-            <h2>Run This Solution</h2>
-            <p>To run this script, use the following command with UV:</p>
-            <code>uv run {{ "{{ link }}" }}</code>
-            <span class="copy-icon" onclick="copyToClipboard('uv run {{ "{{ link }}" }}')">Copy</span>
+        <div class="execution-command">
+            <h2>Run This Script</h2>
+            <code>uv run {{ "{{ script_source }}" }}</code>
+            <button id="copyButton" class="copy-button" onclick="copyToClipboard('uv run {{ "{{ script_source }}" }}')">
+                Copy Command
+            </button>
         </div>
-        <div class="metadata">
-            <table>
+
+        <div class="metadata-section">
+            <div class="metadata-grid">
                 {% raw %}{% for key, value in metadata.items() %}{% endraw %}
-                <tr>
-                    <th>{{ "{{ key }}" }}</th>
-                    <td>{{ "{{ value }}" }}</td>
-                </tr>
+                <div class="metadata-item">
+                    <h3>{{ "{{ key }}" }}</h3>
+                    <p>{{ "{{ value }}" }}</p>
+                </div>
                 {% raw %}{% endfor %}{% endraw %}
-                <tr>
-                    <th><strong>Source File:</strong></th>
-                    <td><a href="blob/main/{{ "{{ link }}" }}" target="_blank">View on GitHub</a></td>
-                </tr>
-            </table>
+            </div>
         </div>
-        {% raw %}{% if repository %}{% endraw %}
-        <p><strong>Repository:</strong> <a href="{{ "{{ repository }}" }}" target="_blank">{{ "{{ repository }}" }}</a></p>
+
+        {% raw %}{% if external_source %}{% endraw %}
+        <div class="external-source">
+            <h3>External Source</h3>
+            <p>This script is sourced from: <a href="{{ "{{ external_source }}" }}" target="_blank">{{ "{{ external_source }}" }}</a></p>
+        </div>
         {% raw %}{% endif %}{% endraw %}
-        <p><strong>Download Python Files:</strong></p>
-        <ul>
-            {% raw %}{% for file in metadata.files %}{% endraw %}
-            <li><a href="{{ "{{ file }}" }}" download>{{ "{{ file }}" }}</a></li>
-            {% raw %}{% endfor %}{% endraw %}
-        </ul>
     </div>
 </body>
 </html>
@@ -536,7 +588,6 @@ def download_external_script(url, output_path, original_metadata):
             f.write(content)
 
 def generate_static_site(base_dir, static_dir):
-    """Generate the static site."""
     os.makedirs(static_dir, exist_ok=True)
     solutions = []
 
@@ -558,23 +609,24 @@ def generate_static_site(base_dir, static_dir):
                     most_recent_file = solution_files[0]
                     file_path = os.path.join(solution_entry.path, most_recent_file)
                     metadata = extract_metadata(file_path)
-                    metadata.pop("files", None)
 
-                    # Handle external scripts first
                     solution_output = os.path.join(group_path, solution_name)
                     os.makedirs(solution_output, exist_ok=True)
-                    
+
+                    # Handle external scripts
                     if "external_source" in metadata:
                         output_path = os.path.join(solution_output, most_recent_file)
-                        with urlopen(metadata["external_source"]) as response:
-                            external_content = response.read().decode('utf-8')
-                            with open(output_path, 'w') as f:
-                                f.write(external_content)
-                    else:
-                        # Copy non-external solution files and cover image
-                        copy_files(solution_entry.path, solution_output, extensions=[".py", ".png"])
+                        try:
+                            with urlopen(metadata["external_source"]) as response:
+                                external_content = response.read().decode('utf-8')
+                                with open(output_path, 'w') as f:
+                                    f.write(external_content)
+                        except Exception as e:
+                            print(f"Error downloading external script: {e}")
 
-                    sanitized_function_name = sanitize_function_name(solution_name)
+                    # Copy local files
+                    copy_files(solution_entry.path, solution_output, extensions=[".py", ".png"])
+
                     cover_relative_path = (
                         f"{entry.name}/{solution_name}/{COVER_IMAGE}"
                         if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE))
@@ -583,31 +635,32 @@ def generate_static_site(base_dir, static_dir):
                     cover_solution_page = COVER_IMAGE if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE)) else None
 
                     base_url = SITE_CONFIG['base_url']
+                    script_source = metadata.get("external_source", f"{base_url}/{entry.name}/{solution_name}/{most_recent_file}")
+                    
                     solution_metadata = {
-                        "name": solution_name,
-                        "function_name": sanitized_function_name,
+                        "name": metadata.get("title", solution_name),
                         "description": metadata.get("description", "No description provided."),
-                        "link": f"{entry.name}/{solution_name}/{most_recent_file}",
+                        "link": f"{entry.name}/{solution_name}",
                         "cover": cover_relative_path,
-                        "cover_solution": cover_solution_page,
-                        "repository": metadata.get("repository", ""),
                         "author": metadata.get("author", ""),
-                        "uv_command": f"{base_url}/{entry.name}/{solution_name}/{most_recent_file}",
+                        "version": metadata.get("version", ""),
+                        "external_source": metadata.get("external_source", ""),
+                        "uv_command": script_source,
                     }
 
                     # Generate solution page
                     with open(os.path.join(solution_output, "index.html"), "w") as f:
                         f.write(Template(SOLUTION_TEMPLATE).render(
                             title=solution_metadata["name"],
-                            cover=solution_metadata["cover_solution"],
+                            cover=cover_solution_page,
                             metadata=format_metadata(metadata),
-                            repository=solution_metadata["repository"],
-                            link=f"{entry.name}/{solution_name}/{most_recent_file}",
+                            external_source=solution_metadata["external_source"],
+                            script_source=script_source,
                             site_config=SITE_CONFIG
                         ))
                     solutions.append(solution_metadata)
 
-    # Generate index, sitemap and MCP server
+    # Generate index page
     with open(os.path.join(static_dir, "index.html"), "w") as f:
         f.write(Template(INDEX_TEMPLATE).render(solutions=solutions, site_config=SITE_CONFIG))
     
