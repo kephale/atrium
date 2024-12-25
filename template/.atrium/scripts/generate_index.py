@@ -277,6 +277,7 @@ SOLUTION_TEMPLATE = """
             --text-secondary: #64748b;
             --border-color: #e2e8f0;
             --code-background: #f1f5f9;
+            --tag-background: #e2e8f0;
             --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
@@ -290,6 +291,7 @@ SOLUTION_TEMPLATE = """
                 --text-secondary: #94a3b8;
                 --border-color: #334155;
                 --code-background: #1e293b;
+                --tag-background: #334155;
             }
         }
 
@@ -363,18 +365,49 @@ SOLUTION_TEMPLATE = """
             margin-bottom: 0.5rem;
         }
 
-        .script-meta {
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin: 1rem 0;
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--code-background);
+            border-radius: 0.5rem;
         }
 
-        .meta-item {
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .metadata-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: var(--text-secondary);
+        }
+
+        .metadata-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag {
+            background: var(--tag-background);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-primary);
         }
 
         .command-section {
@@ -450,13 +483,16 @@ SOLUTION_TEMPLATE = """
             font-size: 0.9rem;
         }
 
-        .source-section {
+        .links-section {
             margin-top: 3rem;
             padding-top: 2rem;
             border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
         }
 
-        .source-link {
+        .link-item {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -465,7 +501,7 @@ SOLUTION_TEMPLATE = """
             font-weight: 500;
         }
 
-        .source-link:hover {
+        .link-item:hover {
             text-decoration: underline;
         }
 
@@ -482,8 +518,8 @@ SOLUTION_TEMPLATE = """
                 font-size: 1.75rem;
             }
             
-            .script-meta {
-                gap: 1rem;
+            .metadata-grid {
+                grid-template-columns: 1fr;
             }
             
             .command-section {
@@ -517,32 +553,69 @@ SOLUTION_TEMPLATE = """
         <section class="script-section">
             <div class="script-header">
                 <h1 class="script-title">{{ '{{ title }}' }}</h1>
-                <div class="script-meta">
-                    <div class="meta-item">
-                        <i class="fas fa-code-branch"></i>
-                        <span>Version {{ '{{ version }}' }}</span>
-                    </div>
+                
+                <div class="metadata-grid">
                     {%- raw -%}
+                    {% if version %}
+                    <div class="metadata-item">
+                        <div class="metadata-label">
+                            <i class="fas fa-code-branch"></i>
+                            Version
+                        </div>
+                        <div class="metadata-value">{{ version }}</div>
+                    </div>
+                    {% endif %}
+
                     {% if author %}
-                    <div class="meta-item">
-                        <i class="fas fa-user"></i>
-                        <span>{{ author }}</span>
+                    <div class="metadata-item">
+                        <div class="metadata-label">
+                            <i class="fas fa-user"></i>
+                            Author
+                        </div>
+                        <div class="metadata-value">{{ author }}</div>
                     </div>
                     {% endif %}
+
                     {% if license %}
-                    <div class="meta-item">
-                        <i class="fas fa-balance-scale"></i>
-                        <span>{{ license }}</span>
+                    <div class="metadata-item">
+                        <div class="metadata-label">
+                            <i class="fas fa-balance-scale"></i>
+                            License
+                        </div>
+                        <div class="metadata-value">{{ license }}</div>
                     </div>
                     {% endif %}
-                    {%- endraw -%}
+
+                    {% if requires_python %}
+                    <div class="metadata-item">
+                        <div class="metadata-label">
+                            <i class="fab fa-python"></i>
+                            Python Version
+                        </div>
+                        <div class="metadata-value">{{ requires_python }}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if keywords %}
+                    <div class="metadata-item">
+                        <div class="metadata-label">
+                            <i class="fas fa-tags"></i>
+                            Keywords
+                        </div>
+                        <div class="tags-container">
+                            {% for keyword in keywords %}
+                            <span class="tag">{{ keyword }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
             <div class="command-section">
                 <h2 class="command-title">Run this script</h2>
                 <div class="command-box">
-                    <code>uv run {{ '{{ script_source }}' }}</code>
+                    <code>uv run {{ script_source }}</code>
                 </div>
                 <button class="copy-button" onclick="copyCommand()">
                     <i class="fas fa-copy"></i>
@@ -551,10 +624,9 @@ SOLUTION_TEMPLATE = """
             </div>
 
             <div class="description-section">
-                <p class="description-content">{{ '{{ description }}' }}</p>
+                <p class="description-content">{{ description }}</p>
             </div>
 
-            {%- raw -%}
             {% if dependencies %}
             <div class="dependencies-section">
                 <h2>Dependencies</h2>
@@ -566,14 +638,35 @@ SOLUTION_TEMPLATE = """
             </div>
             {% endif %}
 
-            {% if external_source %}
-            <div class="source-section">
-                <a href="{{ external_source }}" target="_blank" class="source-link">
+            <div class="links-section">
+                {% if repository %}
+                <a href="{{ repository }}" target="_blank" class="link-item">
+                    <i class="fab fa-github"></i>
+                    Repository
+                </a>
+                {% endif %}
+
+                {% if documentation %}
+                <a href="{{ documentation }}" target="_blank" class="link-item">
+                    <i class="fas fa-book"></i>
+                    Documentation
+                </a>
+                {% endif %}
+
+                {% if homepage %}
+                <a href="{{ homepage }}" target="_blank" class="link-item">
+                    <i class="fas fa-home"></i>
+                    Homepage
+                </a>
+                {% endif %}
+
+                {% if external_source %}
+                <a href="{{ external_source }}" target="_blank" class="link-item">
                     <i class="fas fa-external-link-alt"></i>
                     View Source
                 </a>
+                {% endif %}
             </div>
-            {% endif %}
             {%- endraw -%}
         </section>
     </main>
