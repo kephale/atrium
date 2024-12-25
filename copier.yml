@@ -1,4 +1,3 @@
-# copier.yml - Main configuration file for the template
 project_name:
   type: str
   help: Name of your UV scripts collection project
@@ -33,11 +32,30 @@ minimum_python_version:
     - "3.11"
     - "3.12"
 
+include_example_script:
+  type: bool
+  help: Include a hello world example script
+  default: true
+
+include_remote_script:
+  type: bool
+  help: Include an example of referencing an external script
+  default: true
+
 _templates_suffix: ""
 _subdirectory: template
 _tasks:
   - "mkdir -p .github/workflows"
   - "mkdir -p .atrium/scripts"
+  - '[ "{{ include_example_script }}" = "true" ] && mkdir -p example/hello-world || true'
+  - '[ "{{ include_remote_script }}" = "true" ] && mkdir -p example/external-script || true'
   - "git init"
   - "git add ."
   - "git commit -m 'Initial commit from template'"
+
+_migrations:
+  - version: 1
+    before: |
+      # This migration ensures backward compatibility
+      data.setdefault('include_example_script', True)
+      data.setdefault('include_remote_script', True)
