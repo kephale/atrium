@@ -525,8 +525,53 @@ def generate_mcp_tool_definitions_with_ast(solutions):
     base_url = SITE_CONFIG['base_url']
 
     for solution in solutions:
+        # Handle external scripts differently
+        if 'external_source' in solution and solution['external_source']:
+            # For external scripts, we'll create a simple wrapper that downloads and runs the script
+            solution_name = os.path.basename(os.path.dirname(solution['link']))
+            sanitized_function_name = sanitize_function_name(solution_name)
+            
+            tool_definition = f"""
+{{% raw %}}
+@mcp.tool()
+def {sanitized_function_name}_run():
+    \"\"\"
+    Run external script: {solution['name']}
+    
+    This script is sourced from: {solution['external_source']}
+    \"\"\"
+    import subprocess
+    import threading
+    import tempfile
+    import urllib.request
+    
+    def run_command():
+        with tempfile.NamedTemporaryFile(suffix='.py', delete=False) as tmp:
+            try:
+                urllib.request.urlretrieve('{solution['external_source']}', tmp.name)
+                command = f"uv run {{tmp.name}}"
+                result = subprocess.run(command, shell=True, capture_output=True, text=True)
+                if result.returncode != 0:
+                    print(f"Command failed with error: {{result.stderr}}")
+                else:
+                    print(f"Command output: {{result.stdout.strip()}}")
+            finally:
+                os.unlink(tmp.name)
+    
+    thread = threading.Thread(target=run_command, daemon=True)
+    thread.start()
+    return "Command is running in the background."
+{{% endraw %}}"""
+            tool_definitions.append(tool_definition)
+            continue
+
+        # For local scripts, use the existing logic
         solution_dir = os.path.dirname(solution["uv_command"].replace(f"{base_url}/", ""))
         solution_path = os.path.join(BASE_DIR, solution_dir)
+        
+        if not os.path.exists(solution_path):
+            print(f"Directory not found: {solution_path}. Skipping.")
+            continue
 
         python_files = sorted(
             [f for f in os.listdir(solution_path) if f.endswith(".py")],
@@ -537,35 +582,36 @@ def generate_mcp_tool_definitions_with_ast(solutions):
             continue
 
         latest_python_file = os.path.join(solution_path, python_files[0])
+        
+        try:
+            metadata = extract_metadata(latest_python_file)
+            script_title = metadata.get("title", "Untitled Script")
+            script_description = metadata.get("description", "No description provided.")
 
-        metadata = extract_metadata(latest_python_file)
-        script_title = metadata.get("title", "Untitled Script")
-        script_description = metadata.get("description", "No description provided.")
+            solution_name = os.path.basename(solution_dir)
+            sanitized_function_name = sanitize_function_name(solution_name)
 
-        solution_name = os.path.basename(solution_dir)
-        sanitized_function_name = sanitize_function_name(solution_name)
+            typer_commands = extract_typer_commands_with_ast(latest_python_file)
 
-        typer_commands = extract_typer_commands_with_ast(latest_python_file)
-
-        for command in typer_commands:
-            command_name = command["command_name"]
-            tool_definition = """
+            for command in typer_commands:
+                command_name = command["command_name"]
+                tool_definition = """
 {% raw %}
 @mcp.tool()
 def """ + f"{sanitized_function_name}_{command_name}" + """(""" + ", ".join(
-                f"{arg['name']}: {arg['type']} = {repr(arg['default'])}" if arg["default"] is not None
-                else f"{arg['name']}: {arg['type']}"
-                for arg in command["arguments"]
-            ) + """):
+                    f"{arg['name']}: {arg['type']} = {repr(arg['default'])}" if arg["default"] is not None
+                    else f"{arg['name']}: {arg['type']}"
+                    for arg in command["arguments"]
+                ) + """):
     \"\"\"""" + f"{script_title}\n\n    {script_description}" + """\"\"\"
     import subprocess
     import threading
 
     def run_command():
         command = f"uv run """ + f"{solution['uv_command']}" + " " + " ".join(
-                f"--{arg['name']} {{{arg['name']}}}"
-                for arg in command["arguments"]
-            ) + """\"
+                    f"--{arg['name']} {{{arg['name']}}}"
+                    for arg in command["arguments"]
+                ) + """\"
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         if result.returncode != 0:
             print(f"Command failed with error: {result.stderr}")
@@ -576,7 +622,10 @@ def """ + f"{sanitized_function_name}_{command_name}" + """(""" + ", ".join(
     thread.start()
     return "Command is running in the background."
 {% endraw %}"""
-            tool_definitions.append(tool_definition)
+                tool_definitions.append(tool_definition)
+        except Exception as e:
+            print(f"Error processing {latest_python_file}: {e}")
+            continue
 
     return "\n".join(tool_definitions)
 
