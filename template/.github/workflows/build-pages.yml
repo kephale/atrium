@@ -20,8 +20,10 @@ jobs:
       - name: Generate static site
         run: |
           python .atrium/scripts/generate_index.py
+          mkdir -p docs
+          cp -r .atrium/docs/* docs/
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ "{{ secrets.GITHUB_TOKEN }}" }}
-          publish_dir: .atrium/docs
+          publish_dir: docs
