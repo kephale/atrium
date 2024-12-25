@@ -21,117 +21,238 @@ MCP_SERVER_PATH = os.path.join(STATIC_DIR, "mcp_server.py")
 # Templates
 INDEX_TEMPLATE = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Atrium</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atrium - UV Script Collection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1d4ed8;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #3b82f6;
+                --secondary-color: #60a5fa;
+                --background-color: #0f172a;
+                --card-background: #1e293b;
+                --text-primary: #f1f5f9;
+                --text-secondary: #94a3b8;
+                --border-color: #334155;
+            }
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
+            box-sizing: border-box;
         }
-        h1 {
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2.5rem 1rem;
             text-align: center;
-            margin-top: 20px;
-            font-size: 2.5em;
-            color: #333;
+            color: white;
         }
-        .grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            padding: 30px;
-            max-width: 1200px;
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
             margin: 0 auto;
         }
-        .card {
-            width: 300px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            background: #fff;
-            transition: transform 0.2s, box-shadow 0.2s;
-            overflow: hidden;
-            text-align: left;
-            padding: 15px;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
+
+        .search-container {
+            margin: 1rem auto 2rem;
+            max-width: 600px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background-color: var(--card-background);
+            color: var(--text-primary);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--hover-shadow);
         }
-        .card img {
+
+        .card-image {
             width: 100%;
-            height: auto;
-            border-radius: 4px;
-            margin-bottom: 10px;
+            height: 200px;
+            object-fit: cover;
         }
-        .card h2 {
-            font-size: 1.4em;
-            margin: 0 0 10px 0;
-            color: #333;
+
+        .card-content {
+            padding: 1.5rem;
         }
-        .card .metadata {
-            font-size: 0.9em;
-            color: #666;
-            margin: 5px 0;
-        }
-        .card .metadata span {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .card p {
-            font-size: 0.9em;
-            color: #555;
-            margin: 10px 0;
-        }
-        .card a {
+
+        .card-title {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
             text-decoration: none;
-            color: #007BFF;
-            font-weight: bold;
-            transition: color 0.2s;
         }
-        .card a:hover {
-            color: #0056b3;
+
+        .card-title:hover {
+            color: var(--primary-color);
         }
-        .external-source {
-            background: #f8f9fa;
-            padding: 8px;
-            border-radius: 4px;
-            margin-top: 10px;
-            font-size: 0.85em;
+
+        .card-metadata {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .card-metadata i {
+            margin-right: 0.5rem;
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .card-source {
+            font-size: 0.85rem;
+            padding: 0.5rem;
+            background-color: var(--background-color);
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .card-source a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .card-source a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Atrium</h1>
-    <div class="grid">
-        {% raw %}{% for solution in solutions %}{% endraw %}
-        <div class="card">
-            {% raw %}{% if solution.cover %}{% endraw %}
-            <img src="{{ "{{ solution.cover }}" }}" alt="{{ "{{ solution.name }}" }}">
-            {% raw %}{% endif %}{% endraw %}
-            <h2><a href="{{ "{{ solution.link }}" }}/index.html">{{ "{{ solution.name }}" }}</a></h2>
-            <div class="metadata">
-                {% raw %}{% if solution.author %}{% endraw %}
-                <span>Author: {{ "{{ solution.author }}" }}</span>
-                {% raw %}{% endif %}{% endraw %}
-                {% raw %}{% if solution.version %}{% endraw %}
-                <span>Version: {{ "{{ solution.version }}" }}</span>
-                {% raw %}{% endif %}{% endraw %}
-            </div>
-            <p>{{ "{{ solution.description }}" }}</p>
-            {% raw %}{% if solution.external_source %}{% endraw %}
-            <div class="external-source">
-                Source: <a href="{{ "{{ solution.external_source }}" }}" target="_blank">{{ "{{ solution.external_source }}" }}</a>
-            </div>
-            {% raw %}{% endif %}{% endraw %}
+    <header class="header">
+        <h1>Atrium</h1>
+        <p>A curated collection of UV-compatible Python scripts</p>
+    </header>
+
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="searchBox" class="search-box" placeholder="Search scripts..." 
+                   onkeyup="filterCards()">
         </div>
-        {% raw %}{% endfor %}{% endraw %}
+
+        <div class="grid" id="scriptsGrid">
+            {% raw %}{% for solution in solutions %}{% endraw %}
+            <div class="card">
+                {% raw %}{% if solution.cover %}{% endraw %}
+                <img class="card-image" src="{{ "{{ solution.cover }}" }}" alt="{{ "{{ solution.name }}" }}">
+                {% raw %}{% endif %}{% endraw %}
+                
+                <div class="card-content">
+                    <a href="{{ "{{ solution.link }}" }}/index.html" class="card-title">
+                        <h2>{{ "{{ solution.name }}" }}</h2>
+                    </a>
+                    
+                    <div class="card-metadata">
+                        {% raw %}{% if solution.author %}{% endraw %}
+                        <p><i class="fas fa-user"></i> {{ "{{ solution.author }}" }}</p>
+                        {% raw %}{% endif %}{% endraw %}
+                        {% raw %}{% if solution.version %}{% endraw %}
+                        <p><i class="fas fa-code-branch"></i> {{ "{{ solution.version }}" }}</p>
+                        {% raw %}{% endif %}{% endraw %}
+                    </div>
+
+                    <p class="card-description">{{ "{{ solution.description }}" }}</p>
+
+                    {% raw %}{% if solution.external_source %}{% endraw %}
+                    <div class="card-source">
+                        <i class="fas fa-link"></i>
+                        <a href="{{ "{{ solution.external_source }}" }}" target="_blank">View Source</a>
+                    </div>
+                    {% raw %}{% endif %}{% endraw %}
+                </div>
+            </div>
+            {% raw %}{% endfor %}{% endraw %}
+        </div>
     </div>
+
+    <script>
+        function filterCards() {
+            const searchText = document.getElementById('searchBox').value.toLowerCase();
+            const cards = document.getElementsByClassName('card');
+            
+            Array.from(cards).forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const description = card.querySelector('.card-description').textContent.toLowerCase();
+                const shouldShow = title.includes(searchText) || description.includes(searchText);
+                card.style.display = shouldShow ? 'block' : 'none';
+            });
+        }
+    </script>
 </body>
 </html>
 """
@@ -140,124 +261,215 @@ SOLUTION_TEMPLATE = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ "{{ title }}" }}</title>
-    <link rel="stylesheet" href="../../style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ "{{ title }}" }} - Atrium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1d4ed8;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --code-background: #f1f5f9;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #3b82f6;
+                --secondary-color: #60a5fa;
+                --background-color: #0f172a;
+                --card-background: #1e293b;
+                --text-primary: #f1f5f9;
+                --text-secondary: #94a3b8;
+                --border-color: #334155;
+                --code-background: #1e293b;
+            }
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            box-sizing: border-box;
         }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-            padding-bottom: 40px;
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
         }
-        header {
-            background: #333;
-            color: #fff;
-            padding: 20px 0;
-            margin-bottom: 30px;
-        }
-        header h1 {
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            color: white;
             text-align: center;
-            margin: 0;
-            font-size: 24px;
         }
-        .cover {
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .cover-image {
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+            border-radius: 1rem;
             display: block;
-            margin: 20px auto;
-            max-width: 80%;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .execution-command {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border: 1px solid #dee2e6;
+
+        .section {
+            background: var(--card-background);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
         }
-        .execution-command code {
+
+        .section h2 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-block {
+            background: var(--code-background);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .code-block code {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            color: var(--text-primary);
             display: block;
-            background: #fff;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 10px 0;
-            border: 1px solid #e9ecef;
-            font-family: monospace;
+            white-space: pre-wrap;
         }
+
         .copy-button {
-            background: #007bff;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
             cursor: pointer;
-            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
         }
+
         .copy-button:hover {
-            background: #0056b3;
+            background: var(--secondary-color);
         }
-        .metadata-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+
         .metadata-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
         }
+
         .metadata-item {
-            margin-bottom: 15px;
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
         }
+
         .metadata-item h3 {
-            margin: 0 0 5px 0;
-            color: #495057;
-            font-size: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
+
         .metadata-item p {
-            margin: 0;
-            color: #6c757d;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
+
         .external-source {
-            background: #e9ecef;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 20px;
+            background: var(--background-color);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
         }
-        .navigation {
-            text-align: center;
-            margin: 20px 0;
+
+        .external-source h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .navigation a {
-            color: #fff;
+
+        .external-source a {
+            color: var(--primary-color);
             text-decoration: none;
-            padding: 5px 15px;
-            border-radius: 4px;
-            transition: opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .navigation a:hover {
-            opacity: 0.8;
+
+        .external-source a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .metadata-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
         }
     </style>
-    <script>
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const copyButton = document.getElementById('copyButton');
-                copyButton.textContent = 'Copied!';
-                setTimeout(() => {
-                    copyButton.textContent = 'Copy Command';
-                }, 2000);
-            });
-        }
-    </script>
 </head>
 <body>
     <header>
