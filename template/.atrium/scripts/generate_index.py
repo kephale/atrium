@@ -533,12 +533,6 @@ def download_external_script(url, output_path, original_metadata):
     with urlopen(url) as response:
         content = response.read().decode('utf-8')
         with open(output_path, 'w') as f:
-            f.write('# /// script\n')
-            for key in ['title', 'description', 'version']:
-                if key in original_metadata:
-                    f.write(f'# {key} = "{original_metadata[key]}"\n')
-            f.write('# ///')
-            f.write('\n\n')
             f.write(content)
 
 def generate_static_site(base_dir, static_dir):
