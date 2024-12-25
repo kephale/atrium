@@ -987,15 +987,20 @@ def generate_static_site(base_dir, static_dir):
                     }
 
                     # Generate solution page
+                    template_vars = {
+                        'title': solution_metadata["name"],
+                        'cover': cover_solution_page,
+                        'description': solution_metadata["description"],
+                        'author': metadata.get("author", ""),
+                        'version': metadata.get("version", ""),
+                        'license': metadata.get("license", ""),
+                        'dependencies': metadata.get("dependencies", []),
+                        'external_source': solution_metadata["external_source"],
+                        'script_source': script_source
+                    }
+                    
                     with open(os.path.join(solution_output, "index.html"), "w") as f:
-                        f.write(Template(SOLUTION_TEMPLATE).render(
-                            title=solution_metadata["name"],
-                            cover=cover_solution_page,
-                            metadata=format_metadata(metadata),
-                            external_source=solution_metadata["external_source"],
-                            script_source=script_source,
-                            site_config=SITE_CONFIG
-                        ))
+                        f.write(Template(SOLUTION_TEMPLATE).render(**template_vars))
                     solutions.append(solution_metadata)
 
     # Generate index page and sitemap
