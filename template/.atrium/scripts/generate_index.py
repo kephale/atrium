@@ -257,8 +257,8 @@ INDEX_TEMPLATE = """
             {%- raw -%}
             {% for solution in solutions %}
             <div class="card">
-                {% if cover_image %}
-                <img class="card-image" src="{{ cover_image }}" alt="{{ solution.name }}">
+                {% if solution.cover %}
+                <img class="card-image" src="{{ solution.cover }}" alt="{{ solution.name }}">
                 {% endif %}
                 
                 <div class="card-content">
@@ -654,8 +654,8 @@ SOLUTION_TEMPLATE = """
             <div class="script-header">
                 <h1 class="script-title">{{ '{{ title }}' }}</h1>
                 
-                {% if solution.cover_image %}
-                <img src="{{ solution.cover_image }}" alt="{{ solution.name }} cover image" class="card-image">
+                {% if cover_image %}
+                <img src="{{ cover_image }}" alt="{{ title }} cover image" class="card-image">
                 {% endif %}
 
                 <div class="metadata-grid">
@@ -1193,7 +1193,7 @@ def generate_static_site(base_dir, static_dir):
                         "description": metadata.get("description", "No description provided."),
                         "link": f"{entry.name}/{solution_name}",
                         "cover": metadata.get("cover_image") or (
-                            f"{entry.name}/{solution_name}/{COVER_IMAGE}"
+                            f"{SITE_CONFIG['base_url']}/{entry.name}/{solution_name}/{COVER_IMAGE}"
                             if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE))
                             else None
                         ),
