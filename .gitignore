@@ -9,3 +9,8 @@ wheels/
 # Virtual environments
 .venv
 .atrium/docs
+
+*.env
+.idea/
+.vscode/
+node_modules/

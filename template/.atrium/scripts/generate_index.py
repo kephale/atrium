@@ -343,6 +343,14 @@ def extract_metadata(file_path):
                 value = value.strip('"').strip("'")
             print(f"Final metadata save: {key} = {value}")  # Debugging
             metadata[key] = value
+            
+    # If external_source is present, use it as the script source
+    if "external_source" in metadata:
+        metadata["script_source"] = metadata["external_source"]
+    else:
+        metadata["script_source"] = f"{SITE_CONFIG['base_url']}/{file_path}"
+
+    return metadata
 
     print(f"Metadata extracted from {file_path}: {metadata}")
     return metadata
