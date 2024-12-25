@@ -572,7 +572,7 @@ def generate_static_site(base_dir, static_dir):
                     
                     if "external_source" in metadata:
                         output_path = os.path.join(solution_output, most_recent_file)
-                        with urllib.request.urlopen(metadata["external_source"]) as response:
+                        with urlopen(metadata["external_source"]) as response:
                             external_content = response.read().decode('utf-8')
                             with open(output_path, 'w') as f:
                                 f.write('# /// script\n')
