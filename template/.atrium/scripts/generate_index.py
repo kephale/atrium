@@ -1059,7 +1059,8 @@ def {sanitized_function_name}_run():
             tool_definitions.append(tool_definition)
             continue
 
-        solution_dir = os.path.dirname(solution["uv_command"].replace(f"{base_url}/", ""))
+        # Use script_source instead of uv_command
+        solution_dir = os.path.dirname(solution["script_source"].replace(f"{base_url}/", ""))
         solution_path = os.path.join(BASE_DIR, solution_dir)
         
         if not os.path.exists(solution_path):
@@ -1108,7 +1109,7 @@ def {sanitized_function_name}_{command_name}({args_def}):
 
     def run_command():
         args = " {args_cmd}"
-        command = "uv run {solution['uv_command']}" + args
+        command = "uv run {solution['script_source']}" + args
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         if result.returncode != 0:
             print("Command failed with error: " + result.stderr)
