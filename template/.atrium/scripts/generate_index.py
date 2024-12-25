@@ -6,7 +6,7 @@ from jinja2 import Template
 import importlib.util
 from typer.main import get_command
 import ast
-import urllib
+from urllib.request import urlopen
 
 # Import site configuration
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
@@ -530,7 +530,7 @@ def """ + f"{sanitized_function_name}_{command_name}" + """(""" + ", ".join(
 
 def download_external_script(url, output_path, original_metadata):
     """Download external script and preserve original metadata."""
-    with urllib.request.urlopen(url) as response:
+    with urlopen(url) as response:
         content = response.read().decode('utf-8')
         with open(output_path, 'w') as f:
             f.write('# /// script\n')
