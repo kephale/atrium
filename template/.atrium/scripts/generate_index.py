@@ -25,7 +25,7 @@ INDEX_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ '{{ project_name }}' }} - UV Script Collection</title>
+    <title>{{ '{{ site_config.project_name }}' }} - UV Script Collection</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -242,18 +242,8 @@ INDEX_TEMPLATE = """
 <body>
     <header class="header-banner">
         <div class="header-content">
-            <h1 class="header-title">{{ '{{ project_name }}' }}</h1>
-            <p class="header-subtitle">{{ '{{ project_description }}' }}</p>
-            <div class="header-stats">
-                <div class="stat-item">
-                    <div class="stat-value">{{ '{{ solutions|length }}' }}</div>
-                    <div class="stat-label">Scripts Available</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">{{ '{{ categories|length }}' }}</div>
-                    <div class="stat-label">Categories</div>
-                </div>
-            </div>
+            <h1 class="header-title">{{ '{{ site_config.project_name }}' }}</h1>
+            <p class="header-subtitle">{{ '{{ site_config.project_description }}' }}</p>
         </div>
     </header>
 
@@ -323,7 +313,7 @@ SOLUTION_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ '{{ title }}' }} - {{ '{{ project_name }}' }}</title>
+    <title>{{ '{{ title }}' }} - {{ '{{ site_config.project_name }}' }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
