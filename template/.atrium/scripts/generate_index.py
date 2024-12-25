@@ -195,8 +195,8 @@ INDEX_TEMPLATE = """
 </head>
 <body>
     <header class="header">
-        <h1>Atrium</h1>
-        <p>A curated collection of UV-compatible Python scripts</p>
+        <h1>{{ '{{ project_name }}' }}</h1>
+        <p>{{ '{{ project_description }}' }}</p>
     </header>
 
     <div class="container">
@@ -206,37 +206,39 @@ INDEX_TEMPLATE = """
         </div>
 
         <div class="grid" id="scriptsGrid">
-            {% raw %}{% for solution in solutions %}{% endraw %}
+            {%- raw -%}
+            {% for solution in solutions %}
             <div class="card">
-                {% raw %}{% if solution.cover %}{% endraw %}
-                <img class="card-image" src="{{ "{{ solution.cover }}" }}" alt="{{ "{{ solution.name }}" }}">
-                {% raw %}{% endif %}{% endraw %}
+                {% if solution.cover %}
+                <img class="card-image" src="{{ solution.cover }}" alt="{{ solution.name }}">
+                {% endif %}
                 
                 <div class="card-content">
-                    <a href="{{ "{{ solution.link }}" }}/index.html" class="card-title">
-                        <h2>{{ "{{ solution.name }}" }}</h2>
+                    <a href="{{ solution.link }}/index.html" class="card-title">
+                        <h2>{{ solution.name }}</h2>
                     </a>
                     
                     <div class="card-metadata">
-                        {% raw %}{% if solution.author %}{% endraw %}
-                        <p><i class="fas fa-user"></i> {{ "{{ solution.author }}" }}</p>
-                        {% raw %}{% endif %}{% endraw %}
-                        {% raw %}{% if solution.version %}{% endraw %}
-                        <p><i class="fas fa-code-branch"></i> {{ "{{ solution.version }}" }}</p>
-                        {% raw %}{% endif %}{% endraw %}
+                        {% if solution.author %}
+                        <p><i class="fas fa-user"></i> {{ solution.author }}</p>
+                        {% endif %}
+                        {% if solution.version %}
+                        <p><i class="fas fa-code-branch"></i> {{ solution.version }}</p>
+                        {% endif %}
                     </div>
 
-                    <p class="card-description">{{ "{{ solution.description }}" }}</p>
+                    <p class="card-description">{{ solution.description }}</p>
 
-                    {% raw %}{% if solution.external_source %}{% endraw %}
+                    {% if solution.external_source %}
                     <div class="card-source">
                         <i class="fas fa-link"></i>
-                        <a href="{{ "{{ solution.external_source }}" }}" target="_blank">View Source</a>
+                        <a href="{{ solution.external_source }}" target="_blank">View Source</a>
                     </div>
-                    {% raw %}{% endif %}{% endraw %}
+                    {% endif %}
                 </div>
             </div>
-            {% raw %}{% endfor %}{% endraw %}
+            {% endfor %}
+            {%- endraw -%}
         </div>
     </div>
 
@@ -499,7 +501,7 @@ SOLUTION_TEMPLATE = """
 </head>
 <body>
     <header class="header">
-        <h1>{{ title }}</h1>
+        <h1>{{ '{{ title }}' }}</h1>
     </header>
 
     <nav class="nav-bar">
@@ -514,12 +516,13 @@ SOLUTION_TEMPLATE = """
     <main class="container">
         <section class="script-section">
             <div class="script-header">
-                <h1 class="script-title">{{ title }}</h1>
+                <h1 class="script-title">{{ '{{ title }}' }}</h1>
                 <div class="script-meta">
                     <div class="meta-item">
                         <i class="fas fa-code-branch"></i>
-                        <span>Version {{ version }}</span>
+                        <span>Version {{ '{{ version }}' }}</span>
                     </div>
+                    {%- raw -%}
                     {% if author %}
                     <div class="meta-item">
                         <i class="fas fa-user"></i>
@@ -532,13 +535,14 @@ SOLUTION_TEMPLATE = """
                         <span>{{ license }}</span>
                     </div>
                     {% endif %}
+                    {%- endraw -%}
                 </div>
             </div>
 
             <div class="command-section">
                 <h2 class="command-title">Run this script</h2>
                 <div class="command-box">
-                    <code>uv run {{ script_source }}</code>
+                    <code>uv run {{ '{{ script_source }}' }}</code>
                 </div>
                 <button class="copy-button" onclick="copyCommand()">
                     <i class="fas fa-copy"></i>
@@ -547,9 +551,10 @@ SOLUTION_TEMPLATE = """
             </div>
 
             <div class="description-section">
-                <p class="description-content">{{ description }}</p>
+                <p class="description-content">{{ '{{ description }}' }}</p>
             </div>
 
+            {%- raw -%}
             {% if dependencies %}
             <div class="dependencies-section">
                 <h2>Dependencies</h2>
@@ -569,6 +574,7 @@ SOLUTION_TEMPLATE = """
                 </a>
             </div>
             {% endif %}
+            {%- endraw -%}
         </section>
     </main>
 
