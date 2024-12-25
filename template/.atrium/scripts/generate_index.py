@@ -659,17 +659,6 @@ def generate_static_site(base_dir, static_dir):
                     solution_output = os.path.join(group_path, solution_name)
                     os.makedirs(solution_output, exist_ok=True)
 
-                    # Handle external scripts
-                    if "external_source" in metadata:
-                        output_path = os.path.join(solution_output, most_recent_file)
-                        try:
-                            with urlopen(metadata["external_source"]) as response:
-                                external_content = response.read().decode('utf-8')
-                                with open(output_path, 'w') as f:
-                                    f.write(external_content)
-                        except Exception as e:
-                            print(f"Error downloading external script: {e}")
-
                     # Copy local files
                     copy_files(solution_entry.path, solution_output, extensions=[".py", ".png"])
 
@@ -681,7 +670,22 @@ def generate_static_site(base_dir, static_dir):
                     cover_solution_page = COVER_IMAGE if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE)) else None
 
                     base_url = SITE_CONFIG['base_url']
-                    script_source = metadata.get("external_source", f"{base_url}/{entry.name}/{solution_name}/{most_recent_file}")
+                    script_path = f"{entry.name}/{solution_name}/{most_recent_file}"
+                    
+                    # Handle external scripts - copy them to our repo instead of using direct URL
+                    if "external_source" in metadata:
+                        output_path = os.path.join(solution_output, most_recent_file)
+                        try:
+                            with urlopen(metadata["external_source"]) as response:
+                                external_content = response.read().decode('utf-8')
+                                with open(output_path, 'w') as f:
+                                    f.write(external_content)
+                            script_source = f"{base_url}/{script_path}"
+                        except Exception as e:
+                            print(f"Error downloading external script: {e}")
+                            script_source = metadata["external_source"]
+                    else:
+                        script_source = f"{base_url}/{script_path}"
                     
                     solution_metadata = {
                         "name": metadata.get("title", solution_name),
@@ -706,12 +710,13 @@ def generate_static_site(base_dir, static_dir):
                         ))
                     solutions.append(solution_metadata)
 
-    # Generate index page
+    # Generate index page and sitemap
     with open(os.path.join(static_dir, "index.html"), "w") as f:
         f.write(Template(INDEX_TEMPLATE).render(solutions=solutions, site_config=SITE_CONFIG))
     
     generate_sitemap_txt(solutions, static_dir)
     
+    # Generate MCP server code
     tool_definitions = generate_mcp_tool_definitions_with_ast(solutions)
     with open(MCP_SERVER_PATH, "w") as f:
         f.write(Template("""
