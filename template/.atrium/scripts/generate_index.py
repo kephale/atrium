@@ -1136,6 +1136,14 @@ def download_external_script(url, output_path, original_metadata):
         with open(output_path, 'w') as f:
             f.write(content)
 
+def get_cover_image_path(solution_entry, entry, solution_name, metadata, site_config):
+    """Helper function to consistently resolve cover image paths."""
+    if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE)):
+        return f"{site_config['base_url']}/{entry.name}/{solution_name}/{COVER_IMAGE}"
+    elif "cover_image" in metadata:
+        return metadata["cover_image"]
+    return None
+
 def generate_static_site(base_dir, static_dir):
     """Generate the static site with proper site_config handling."""
     os.makedirs(static_dir, exist_ok=True)
@@ -1163,67 +1171,41 @@ def generate_static_site(base_dir, static_dir):
                     solution_output = os.path.join(group_path, solution_name)
                     os.makedirs(solution_output, exist_ok=True)
 
-                    # Copy local files
+                    # Copy local files including cover image
                     copy_files(solution_entry.path, solution_output, extensions=[".py", ".png"])
 
-                    cover_relative_path = (
-                        f"{entry.name}/{solution_name}/{COVER_IMAGE}"
-                        if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE))
-                        else None
+                    # Get cover image path consistently
+                    cover_image_path = get_cover_image_path(
+                        solution_entry, entry, solution_name, metadata, SITE_CONFIG
                     )
-                    cover_solution_page = COVER_IMAGE if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE)) else None
-
+                    
                     base_url = SITE_CONFIG['base_url']
                     script_path = f"{entry.name}/{solution_name}/{most_recent_file}"
-                    
-                    # Handle external scripts
-                    if "external_source" in metadata:
-                        output_path = os.path.join(solution_output, most_recent_file)
-                        try:
-                            with urlopen(metadata["external_source"]) as response:
-                                external_content = response.read().decode('utf-8')
-                                with open(output_path, 'w') as f:
-                                    f.write(external_content)
-                            script_source = f"{base_url}/{script_path}"
-                        except Exception as e:
-                            print(f"Error downloading external script: {e}")
-                            script_source = metadata["external_source"]
-                    else:
-                        script_source = f"{base_url}/{script_path}"
                     
                     solution_metadata = {
                         "name": metadata.get("title", solution_name),
                         "description": metadata.get("description", "No description provided."),
                         "link": f"{entry.name}/{solution_name}",
-                        "cover": metadata.get("cover_image") or (
-                            f"{SITE_CONFIG['base_url']}/{entry.name}/{solution_name}/{COVER_IMAGE}"
-                            if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE))
-                            else None
-                        ),
+                        "cover": cover_image_path,  # Use consistent cover image path
                         "author": metadata.get("author", ""),
                         "version": metadata.get("version", ""),
                         "external_source": metadata.get("external_source", ""),
-                        "script_source": script_source,
+                        "script_source": f"{base_url}/{script_path}",
                     }
 
-                    # Generate solution page with site_config included
+                    # Generate solution page with consistent cover image path
                     template_vars = {
                         'title': solution_metadata["name"],
                         'project_name': SITE_CONFIG['project_name'],
                         'site_config': SITE_CONFIG,
-                        'cover_image': metadata.get("cover_image") or (
-                            f"{SITE_CONFIG['base_url']}/{entry.name}/{solution_name}/{COVER_IMAGE}"
-                            if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE))
-                            else None
-                        ),
+                        'cover_image': cover_image_path,  # Use same cover image path
                         'description': solution_metadata["description"],
                         'author': metadata.get("author", ""),
                         'version': metadata.get("version", ""),
                         'license': metadata.get("license", ""),
                         'dependencies': metadata.get("dependencies", []),
                         'external_source': solution_metadata["external_source"],
-                        'is_external': bool(metadata.get("external_source", False)),
-                        'script_source': script_source,
+                        'script_source': solution_metadata["script_source"],
                         'keywords': metadata.get("keywords", []),
                         'requires_python': metadata.get("requires_python", ""),
                         'repository': metadata.get("repository", ""),

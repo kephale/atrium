@@ -9,6 +9,7 @@
 # documentation = "https://github.com/{{ github_username }}/{{ project_name }}#readme"
 # homepage = "https://{{ github_username }}.github.io/{{ project_name }}"
 # requires-python = ">={{ minimum_python_version }}"
+# cover_image = "cover.png"
 # dependencies = [
 # "typer"
 # ]
