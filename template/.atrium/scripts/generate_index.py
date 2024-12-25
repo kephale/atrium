@@ -343,7 +343,7 @@ def extract_metadata(file_path):
                 value = value.strip('"').strip("'")
             print(f"Final metadata save: {key} = {value}")  # Debugging
             metadata[key] = value
-            
+
     # If external_source is present, use it as the script source
     if "external_source" in metadata:
         metadata["script_source"] = metadata["external_source"]
@@ -527,6 +527,18 @@ def """ + f"{sanitized_function_name}_{command_name}" + """(""" + ", ".join(
 
     return "\n".join(tool_definitions)
 
+def download_external_script(url, output_path, original_metadata):
+    """Download external script and preserve original metadata."""
+    with urllib.request.urlopen(url) as response:
+        content = response.read().decode('utf-8')
+        with open(output_path, 'w') as f:
+            f.write('# /// script\n')
+            for key in ['title', 'description', 'version']:
+                if key in original_metadata:
+                    f.write(f'# {key} = "{original_metadata[key]}"\n')
+            f.write('# ///')
+            f.write('\n\n')
+            f.write(content)
 
 def generate_static_site(base_dir, static_dir):
     """Generate the static site."""
@@ -549,11 +561,30 @@ def generate_static_site(base_dir, static_dir):
                         continue
 
                     most_recent_file = solution_files[0]
-                    metadata = extract_metadata(os.path.join(solution_entry.path, most_recent_file))
-                    metadata.pop("files", None)  # Remove the files section
+                    file_path = os.path.join(solution_entry.path, most_recent_file)
+                    metadata = extract_metadata(file_path)
+                    metadata.pop("files", None)
+
+                    # Handle external scripts first
+                    solution_output = os.path.join(group_path, solution_name)
+                    os.makedirs(solution_output, exist_ok=True)
+                    
+                    if "external_source" in metadata:
+                        output_path = os.path.join(solution_output, most_recent_file)
+                        with urllib.request.urlopen(metadata["external_source"]) as response:
+                            external_content = response.read().decode('utf-8')
+                            with open(output_path, 'w') as f:
+                                f.write('# /// script\n')
+                                for key in ['title', 'description', 'version']:
+                                    if key in metadata:
+                                        f.write(f'# {key} = "{metadata[key]}"\n')
+                                f.write('# ///\n\n')
+                                f.write(external_content)
+                    else:
+                        # Copy non-external solution files and cover image
+                        copy_files(solution_entry.path, solution_output, extensions=[".py", ".png"])
 
                     sanitized_function_name = sanitize_function_name(solution_name)
-
                     cover_relative_path = (
                         f"{entry.name}/{solution_name}/{COVER_IMAGE}"
                         if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE))
@@ -571,15 +602,10 @@ def generate_static_site(base_dir, static_dir):
                         "cover_solution": cover_solution_page,
                         "repository": metadata.get("repository", ""),
                         "author": metadata.get("author", ""),
-
                         "uv_command": f"{base_url}/{entry.name}/{solution_name}/{most_recent_file}",
                     }
 
-                    # Copy solution files and cover image
-                    solution_output = os.path.join(group_path, solution_name)
-                    copy_files(solution_entry.path, solution_output, extensions=[".py", ".png"])
-
-                    # Generate solution page with site_config
+                    # Generate solution page
                     with open(os.path.join(solution_output, "index.html"), "w") as f:
                         f.write(Template(SOLUTION_TEMPLATE).render(
                             title=solution_metadata["name"],
@@ -587,29 +613,22 @@ def generate_static_site(base_dir, static_dir):
                             metadata=format_metadata(metadata),
                             repository=solution_metadata["repository"],
                             link=f"{entry.name}/{solution_name}/{most_recent_file}",
-                            site_config=SITE_CONFIG  # Pass site_config here
+                            site_config=SITE_CONFIG
                         ))
                     solutions.append(solution_metadata)
 
-    # Generate the main index with site_config
+    # Generate index, sitemap and MCP server
     with open(os.path.join(static_dir, "index.html"), "w") as f:
-        f.write(Template(INDEX_TEMPLATE).render(
-            solutions=solutions,
-            site_config=SITE_CONFIG  # Pass site_config here
-        ))
+        f.write(Template(INDEX_TEMPLATE).render(solutions=solutions, site_config=SITE_CONFIG))
     
-    # Generate the sitemap.txt
     generate_sitemap_txt(solutions, static_dir)
     
-    # Generate the mcp_server.py with enhanced tool definitions
     tool_definitions = generate_mcp_tool_definitions_with_ast(solutions)
     with open(MCP_SERVER_PATH, "w") as f:
-        f.write(
-            Template(
-                """
+        f.write(Template("""
 from fastmcp import FastMCP
-from typing import Optional, List, Union  # Commonly used types
-import subprocess  # For executing commands
+from typing import Optional, List, Union
+import subprocess
 
 mcp = FastMCP("Demo 🚀")
 
@@ -617,9 +636,7 @@ mcp = FastMCP("Demo 🚀")
 
 if __name__ == "__main__":
     mcp.run()
-"""
-            ).render(tool_definitions=tool_definitions)
-        )
+""").render(tool_definitions=tool_definitions))
     print(f"mcp_server.py generated at {MCP_SERVER_PATH}")
 
 if __name__ == "__main__":
