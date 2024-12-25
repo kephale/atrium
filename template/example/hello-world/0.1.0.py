@@ -13,7 +13,7 @@ File: template/example/hello-world/0.1.0.py
 # documentation = "https://github.com/{{ github_username }}/{{ project_name }}#readme"
 # homepage = "https://{{ github_username }}.github.io/{{ project_name }}"
 # requires-python = ">={{ minimum_python_version }}"
-# cover_image = "https://github.com/kephale/atrium/blob/main/screenshot.png?raw=true"
+# cover_image = "cover.png"
 # dependencies = [
 # "typer"
 # ]
