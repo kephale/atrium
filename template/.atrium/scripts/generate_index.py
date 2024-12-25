@@ -277,12 +277,9 @@ INDEX_TEMPLATE = """
 
                     <p class="card-description">{{ solution.description }}</p>
 
-                    {% if solution.external_source %}
                     <div class="card-source">
-                        <i class="fas fa-link"></i>
-                        <a href="{{ solution.external_source }}" target="_blank">View Source</a>
+                        <a href="{{ solution.script_source }}" target="_blank">View Source</a>
                     </div>
-                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -657,6 +654,10 @@ SOLUTION_TEMPLATE = """
             <div class="script-header">
                 <h1 class="script-title">{{ '{{ title }}' }}</h1>
                 
+                {% if solution.cover_image %}
+                <img src="{{ solution.cover_image }}" alt="{{ solution.name }} cover image" class="card-image">
+                {% endif %}
+
                 <div class="metadata-grid">
                     {%- raw -%}
                     {% if version %}
@@ -887,13 +888,22 @@ def extract_metadata(file_path):
             print(f"Final metadata save: {key} = {value}")  # Debugging
             metadata[key] = value
 
-    # If external_source is present, use it as the script source
-    if "external_source" in metadata:
-        metadata["script_source"] = metadata["external_source"]
-    else:
-        metadata["script_source"] = f"{SITE_CONFIG['base_url']}/{file_path}"
+        # Handle script source links
+        if "external_source" in metadata:
+            # For external scripts, use the original source
+            metadata["script_source"] = metadata["external_source"]
+        else:
+            # For local scripts, use the GitHub Pages URL
+            relative_path = os.path.relpath(file_path, BASE_DIR)
+            metadata["script_source"] = f"{SITE_CONFIG['base_url']}/{relative_path}"
 
-    return metadata
+        # Handle cover image
+        if not metadata.get("cover_image"):
+            # Check for local cover.png
+            cover_path = os.path.join(os.path.dirname(file_path), "cover.png")
+            if os.path.exists(cover_path):
+                relative_cover = os.path.relpath(cover_path, BASE_DIR)
+                metadata["cover_image"] = f"{SITE_CONFIG['base_url']}/{relative_cover}"
 
     print(f"Metadata extracted from {file_path}: {metadata}")
     return metadata
