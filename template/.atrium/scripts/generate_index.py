@@ -25,7 +25,7 @@ INDEX_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atrium - UV Script Collection</title>
+    <title>{{ '{{ project_name }}' }} - UV Script Collection</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -191,12 +191,70 @@ INDEX_TEMPLATE = """
                 font-size: 1rem;
             }
         }
+        
+                .header-banner {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 3rem 1rem;
+            text-align: center;
+            color: white;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .header-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .header-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
-    <header class="header">
-        <h1>{{ '{{ project_name }}' }}</h1>
-        <p>{{ '{{ project_description }}' }}</p>
+    <header class="header-banner">
+        <div class="header-content">
+            <h1 class="header-title">{{ '{{ project_name }}' }}</h1>
+            <p class="header-subtitle">{{ '{{ project_description }}' }}</p>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-value">{{ '{{ solutions|length }}' }}</div>
+                    <div class="stat-label">Scripts Available</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ '{{ categories|length }}' }}</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+            </div>
+        </div>
     </header>
 
     <div class="container">
@@ -265,7 +323,7 @@ SOLUTION_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - Atrium</title>
+    <title>{{ '{{ title }}' }} - {{ '{{ project_name }}' }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -532,6 +590,61 @@ SOLUTION_TEMPLATE = """
                 width: 100%;
                 justify-content: center;
             }
+        }
+
+                .metadata-section {
+            background: var(--card-background);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .metadata-title {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .metadata-item {
+            padding: 1rem;
+            background: var(--code-background);
+            border-radius: 0.5rem;
+        }
+
+        .metadata-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .metadata-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            background: var(--tag-background);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-primary);
         }
     </style>
 </head>
