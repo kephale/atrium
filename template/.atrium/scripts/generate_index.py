@@ -506,7 +506,7 @@ SOLUTION_TEMPLATE = """
 
     <nav class="nav-bar">
         <div class="container">
-            <a href="../index.html" class="back-link">
+            <a href="../../index.html" class="back-link">
                 <i class="fas fa-arrow-left"></i>
                 Back to Scripts
             </a>
