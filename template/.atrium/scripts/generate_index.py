@@ -1124,6 +1124,7 @@ def download_external_script(url, output_path, original_metadata):
             f.write(content)
 
 def generate_static_site(base_dir, static_dir):
+    """Generate the static site with proper site_config handling."""
     os.makedirs(static_dir, exist_ok=True)
     solutions = []
 
@@ -1162,7 +1163,7 @@ def generate_static_site(base_dir, static_dir):
                     base_url = SITE_CONFIG['base_url']
                     script_path = f"{entry.name}/{solution_name}/{most_recent_file}"
                     
-                    # Handle external scripts - copy them to our repo instead of using direct URL
+                    # Handle external scripts
                     if "external_source" in metadata:
                         output_path = os.path.join(solution_output, most_recent_file)
                         try:
@@ -1188,9 +1189,11 @@ def generate_static_site(base_dir, static_dir):
                         "uv_command": script_source,
                     }
 
-                    # Generate solution page
+                    # Generate solution page with site_config included
                     template_vars = {
                         'title': solution_metadata["name"],
+                        'project_name': SITE_CONFIG['project_name'],
+                        'site_config': SITE_CONFIG,  # Add site_config here
                         'cover': cover_solution_page,
                         'description': solution_metadata["description"],
                         'author': metadata.get("author", ""),
@@ -1198,7 +1201,13 @@ def generate_static_site(base_dir, static_dir):
                         'license': metadata.get("license", ""),
                         'dependencies': metadata.get("dependencies", []),
                         'external_source': solution_metadata["external_source"],
-                        'script_source': script_source
+                        'is_external': bool(metadata.get("external_source", False)),
+                        'script_source': script_source,
+                        'keywords': metadata.get("keywords", []),
+                        'requires_python': metadata.get("requires_python", ""),
+                        'repository': metadata.get("repository", ""),
+                        'documentation': metadata.get("documentation", ""),
+                        'homepage': metadata.get("homepage", "")
                     }
                     
                     with open(os.path.join(solution_output, "index.html"), "w") as f:
@@ -1207,7 +1216,12 @@ def generate_static_site(base_dir, static_dir):
 
     # Generate index page and sitemap
     with open(os.path.join(static_dir, "index.html"), "w") as f:
-        f.write(Template(INDEX_TEMPLATE).render(solutions=solutions, site_config=SITE_CONFIG))
+        context = {
+            'solutions': solutions,
+            'site_config': SITE_CONFIG,
+            'categories': list(set(s["link"].split("/")[0] for s in solutions))
+        }
+        f.write(Template(INDEX_TEMPLATE).render(**context))
     
     generate_sitemap_txt(solutions, static_dir)
     
@@ -1221,7 +1235,7 @@ import subprocess
 
 mcp = FastMCP("Demo 🚀")
 
-{{ "{{ tool_definitions }}" }}
+{{ tool_definitions }}
 
 if __name__ == "__main__":
     mcp.run()
