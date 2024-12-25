@@ -658,6 +658,10 @@ SOLUTION_TEMPLATE = """
                 <img src="{{ cover_image }}" alt="{{ title }} cover image" class="card-image">
                 {% endif %}
 
+                <div class="description-section">
+                    <p class="description-content">{{ description }}</p>
+                </div>
+
                 <div class="metadata-grid">
                     {%- raw -%}
                     {% if version %}
@@ -725,10 +729,6 @@ SOLUTION_TEMPLATE = """
                     <i class="fas fa-copy"></i>
                     Copy Command
                 </button>
-            </div>
-
-            <div class="description-section">
-                <p class="description-content">{{ description }}</p>
             </div>
 
             {% if dependencies %}
