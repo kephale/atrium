@@ -54,7 +54,7 @@ _tasks:
   - "git commit -m 'Initial commit from template'"
 
 _migrations:
-  - version: 1
+  - version: "1.0.0"
     before: |
       # This migration ensures backward compatibility
       data.setdefault('include_example_script', True)
