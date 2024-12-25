@@ -257,8 +257,8 @@ INDEX_TEMPLATE = """
             {%- raw -%}
             {% for solution in solutions %}
             <div class="card">
-                {% if solution.cover %}
-                <img class="card-image" src="{{ solution.cover }}" alt="{{ solution.name }}">
+                {% if cover_image %}
+                <img class="card-image" src="{{ cover_image }}" alt="{{ solution.name }}">
                 {% endif %}
                 
                 <div class="card-content">
@@ -1192,19 +1192,27 @@ def generate_static_site(base_dir, static_dir):
                         "name": metadata.get("title", solution_name),
                         "description": metadata.get("description", "No description provided."),
                         "link": f"{entry.name}/{solution_name}",
-                        "cover": cover_relative_path,
+                        "cover": metadata.get("cover_image") or (
+                            f"{entry.name}/{solution_name}/{COVER_IMAGE}"
+                            if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE))
+                            else None
+                        ),
                         "author": metadata.get("author", ""),
                         "version": metadata.get("version", ""),
                         "external_source": metadata.get("external_source", ""),
-                        "uv_command": script_source,
+                        "script_source": script_source,
                     }
 
                     # Generate solution page with site_config included
                     template_vars = {
                         'title': solution_metadata["name"],
                         'project_name': SITE_CONFIG['project_name'],
-                        'site_config': SITE_CONFIG,  # Add site_config here
-                        'cover': cover_solution_page,
+                        'site_config': SITE_CONFIG,
+                        'cover_image': metadata.get("cover_image") or (
+                            f"{SITE_CONFIG['base_url']}/{entry.name}/{solution_name}/{COVER_IMAGE}"
+                            if os.path.exists(os.path.join(solution_entry.path, COVER_IMAGE))
+                            else None
+                        ),
                         'description': solution_metadata["description"],
                         'author': metadata.get("author", ""),
                         'version': metadata.get("version", ""),
