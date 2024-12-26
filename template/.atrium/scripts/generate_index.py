@@ -1122,7 +1122,7 @@ SOURCE_TEMPLATE = """
     <header class="header">
         <div class="header-content">
             <a href="../../index.html" class="header-logo">
-                <img src="../../icon_transparent.png" alt="{{ site_config.project_name }} Logo" class="logo-image">
+                <img src="../../icon_transparent.png" alt="{{ title }} Logo" class="logo-image">
             </a>
             <div class="header-text">
                 <h1 class="header-title">{{ title }} - Source Code</h1>
