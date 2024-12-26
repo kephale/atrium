@@ -679,10 +679,9 @@ SOLUTION_TEMPLATE = """
         }        
         
         .logo-image {
-            height: 60px;
+            height: 80px;
             width: auto;
             margin: 0 auto;
-            filter: brightness(0) invert(1); /* Makes logo white in dark header */
         }
 
         .header {
