@@ -192,35 +192,45 @@ INDEX_TEMPLATE = """
             }
         }
         
-                .header-banner {
+        .header-banner {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 3rem 1rem;
-            text-align: center;
+            padding: 1rem;
             color: white;
+            position: relative;
         }
 
         .header-content {
             max-width: 800px;
             margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .header-logo {
+            flex-shrink: 0;
+        }
+
+        .logo-image {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
+
+        .header-text {
+            flex-grow: 1;
+            text-align: left;
         }
 
         .header-title {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
             font-weight: 800;
         }
 
         .header-subtitle {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             opacity: 0.9;
-            margin-bottom: 2rem;
-        }
-
-        .header-stats {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 2rem;
         }
 
         .stat-item {
@@ -256,8 +266,10 @@ INDEX_TEMPLATE = """
             <a href="index.html" class="header-logo">
                 <img src="icon_transparent.png" alt="{{ '{{ site_config.project_name }}' }} Logo" class="logo-image">
             </a>
-            <h1 class="header-title">{{ '{{ site_config.project_name }}' }}</h1>
-            <p class="header-subtitle">{{ '{{ site_config.project_description }}' }}</p>
+            <div class="header-text">
+                <h1 class="header-title">{{ '{{ site_config.project_name }}' }}</h1>
+                <p class="header-subtitle">{{ '{{ site_config.project_description }}' }}</p>
+            </div>
         </div>
     </header>
 
@@ -367,13 +379,6 @@ SOLUTION_TEMPLATE = """
             background-color: var(--background-color);
             color: var(--text-primary);
             line-height: 1.6;
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 2.5rem 1rem;
-            color: white;
-            text-align: center;
         }
 
         .header h1 {
@@ -672,11 +677,6 @@ SOLUTION_TEMPLATE = """
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
             }
         }        
-
-        .header-logo {
-            display: block;
-            margin-bottom: 1rem;
-        }
         
         .logo-image {
             height: 60px;
@@ -684,13 +684,42 @@ SOLUTION_TEMPLATE = """
             margin: 0 auto;
             filter: brightness(0) invert(1); /* Makes logo white in dark header */
         }
-        
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 1rem;
+            color: white;
+            position: relative;
+        }
+
         .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 1rem;
-        }        
+            gap: 2rem;
+        }
+
+        .header-logo {
+            flex-shrink: 0;
+        }
+
+        .logo-image {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
+
+        .header-text {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            margin-bottom: 0;
+            font-weight: 800;
+        }    
     </style>
 </head>
 <body>
@@ -699,7 +728,9 @@ SOLUTION_TEMPLATE = """
             <a href="../../index.html" class="header-logo">
                 <img src="../../icon_transparent.png" alt="{{ '{{ site_config.project_name }}' }} Logo" class="logo-image">
             </a>
-            <h1>{{ '{{ title }}' }}</h1>
+            <div class="header-text">
+                <h1 class="header-title">{{ '{{ title }}' }}</h1>
+            </div>
         </div>
     </header>
 
