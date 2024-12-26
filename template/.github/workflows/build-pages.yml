@@ -21,6 +21,7 @@ jobs:
         run: |
           python .atrium/scripts/generate_index.py
           mkdir -p docs
+          cp icon_transparent.png docs/
           cp -r .atrium/docs/* docs/
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
