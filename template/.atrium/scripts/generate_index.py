@@ -237,11 +237,25 @@ INDEX_TEMPLATE = """
             font-size: 0.9rem;
             opacity: 0.8;
         }
+
+        .header-logo {
+            display: block;
+            margin-bottom: 1rem;
+        }
+        
+        .logo-image {
+            height: 80px;
+            width: auto;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
     <header class="header-banner">
         <div class="header-content">
+            <a href="index.html" class="header-logo">
+                <img src="icon_transparent.png" alt="{{ '{{ site_config.project_name }}' }} Logo" class="logo-image">
+            </a>
             <h1 class="header-title">{{ '{{ site_config.project_name }}' }}</h1>
             <p class="header-subtitle">{{ '{{ site_config.project_description }}' }}</p>
         </div>
@@ -658,11 +672,35 @@ SOLUTION_TEMPLATE = """
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
             }
         }        
+
+        .header-logo {
+            display: block;
+            margin-bottom: 1rem;
+        }
+        
+        .logo-image {
+            height: 60px;
+            width: auto;
+            margin: 0 auto;
+            filter: brightness(0) invert(1); /* Makes logo white in dark header */
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }        
     </style>
 </head>
 <body>
     <header class="header">
-        <h1>{{ '{{ title }}' }}</h1>
+        <div class="header-content">
+            <a href="../../index.html" class="header-logo">
+                <img src="../../icon_transparent.png" alt="{{ '{{ site_config.project_name }}' }} Logo" class="logo-image">
+            </a>
+            <h1>{{ '{{ title }}' }}</h1>
+        </div>
     </header>
 
     <nav class="nav-bar">
