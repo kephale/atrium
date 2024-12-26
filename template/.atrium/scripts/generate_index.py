@@ -306,7 +306,7 @@ INDEX_TEMPLATE = """
                     <p class="card-description">{{ solution.description }}</p>
 
                     <div class="card-source">
-                        <a href="{{ solution.script_source }}" target="_blank">View Source</a>
+                        <a href="{{ solution.link }}/source.html">View Source</a>
                     </div>
                 </div>
             </div>
@@ -767,11 +767,11 @@ SOLUTION_TEMPLATE = """
     <header class="header">
         <div class="solution-header-content">
             <a href="../../index.html" class="solution-header-logo">
-                <img src="../../icon_transparent.png" alt="{{ '{{ title }}' }} Logo" class="logo-image">
+                <img src="../../icon_transparent.png" alt="{{ title }} Logo" class="logo-image">
             </a>
             <div class="solution-header-text">
-                <h1 class="solution-title">{{ '{{ title }}' }}</h1>
-                <p class="solution-subtitle">{{ '{{ description }}' }}</p>
+                <h1 class="solution-title">{{ title }}</h1>
+                <p class="solution-subtitle">{{ description }}</p>
             </div>
         </div>
     </header>
@@ -1130,26 +1130,17 @@ SOURCE_TEMPLATE = """
         </div>
     </header>
 
-    <nav class="nav-bar">
-        <div class="container">
-            <a href="./index.html" class="back-link">
-                <i class="fas fa-arrow-left"></i>
-                Back to Script Details
-            </a>
-        </div>
-    </nav>
-
     <main class="container">
         <div class="source-container">
             <div class="source-header">
                 <div class="source-title">{{ filename }}</div>
-                <a href="{{ download_url }}" download class="download-button">
+                <a href="{{ script_source }}" download="{{ filename }}" class="download-button">
                     <i class="fas fa-download"></i>
                     Download Source
                 </a>
             </div>
             <div class="code-wrapper">
-                <pre class="line-numbers"><code class="language-python">{{ source_code }}</code></pre>
+                <pre class="line-numbers"><code class="language-python">{{ '{{' }} source_code }}</code></pre>
             </div>
         </div>
     </main>
@@ -1563,7 +1554,7 @@ def generate_static_site(base_dir, static_dir):
                         'title': metadata.get("title", solution_name),
                         'filename': most_recent_file,
                         'source_code': source_code,
-                        'download_url': f"{base_url}/{script_path}",
+                        'script_source': f"{base_url}/{script_path}",
                         'site_config': SITE_CONFIG
                     }
                     
