@@ -194,32 +194,31 @@ INDEX_TEMPLATE = """
         
         .header-banner {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 1rem;
+            padding: 2rem;
             color: white;
             position: relative;
         }
 
         .header-content {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 2rem;
         }
 
         .header-logo {
             flex-shrink: 0;
+            text-decoration: none;
         }
 
         .logo-image {
             height: 80px;
             width: auto;
-            display: block;
         }
 
         .header-text {
             flex-grow: 1;
-            text-align: left;
         }
 
         .header-title {
@@ -231,6 +230,7 @@ INDEX_TEMPLATE = """
         .header-subtitle {
             font-size: 1.2rem;
             opacity: 0.9;
+            line-height: 1.4;
         }
 
         .stat-item {
@@ -571,34 +571,7 @@ SOLUTION_TEMPLATE = """
             text-decoration: underline;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .script-section {
-                padding: 1.5rem;
-            }
-            
-            .script-title {
-                font-size: 1.75rem;
-            }
-            
-            .metadata-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .command-section {
-                padding: 1rem;
-            }
-            
-            .copy-button {
-                position: static;
-                margin-top: 1rem;
-                width: 100%;
-                justify-content: center;
-            }
-        }
+
 
                 .metadata-section {
             background: var(--card-background);
@@ -719,16 +692,86 @@ SOLUTION_TEMPLATE = """
             margin-bottom: 0;
             font-weight: 800;
         }    
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            color: white;
+            position: relative;
+        }
+
+        .solution-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+        }
+
+        .solution-header-logo {
+            flex-shrink: 0;
+        }
+
+        .solution-header-text {
+            flex-grow: 1;
+        }
+
+        .solution-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .solution-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            line-height: 1.4;
+            max-width: 800px;
+        }
+
+        @media (max-width: 768px) {
+            .header-banner,
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .header-content,
+            .solution-header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .header-text,
+            .solution-header-text {
+                text-align: center;
+            }
+            
+            .header-title,
+            .solution-title {
+                font-size: 2rem;
+            }
+            
+            .header-subtitle,
+            .solution-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .logo-image {
+                height: 60px;
+            }
+        }
     </style>
 </head>
 <body>
     <header class="header">
-        <div class="header-content">
-            <a href="../../index.html" class="header-logo">
+        <div class="solution-header-content">
+            <a href="../../index.html" class="solution-header-logo">
                 <img src="../../icon_transparent.png" alt="{{ '{{ site_config.project_name }}' }} Logo" class="logo-image">
             </a>
-            <div class="header-text">
-                <h1 class="header-title">{{ '{{ title }}' }}</h1>
+            <div class="solution-header-text">
+                <h1 class="solution-title">{{ '{{ title }}' }}</h1>
+                <p class="solution-subtitle">{{ '{{ description }}' }}</p>
             </div>
         </div>
     </header>
