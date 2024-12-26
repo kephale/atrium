@@ -767,7 +767,7 @@ SOLUTION_TEMPLATE = """
     <header class="header">
         <div class="solution-header-content">
             <a href="../../index.html" class="solution-header-logo">
-                <img src="../../icon_transparent.png" alt="{{ '{{ site_config.project_name }}' }} Logo" class="logo-image">
+                <img src="../../icon_transparent.png" alt="{{ '{{ title }}' }} Logo" class="logo-image">
             </a>
             <div class="solution-header-text">
                 <h1 class="solution-title">{{ '{{ title }}' }}</h1>
