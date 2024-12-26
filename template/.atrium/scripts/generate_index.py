@@ -883,6 +883,11 @@ SOLUTION_TEMPLATE = """
             {% endif %}
 
             <div class="links-section">
+                <a href="./source.html" class="link-item">
+                    <i class="fas fa-code"></i>
+                    View Source Code
+                </a>
+
                 {% if repository %}
                 <a href="{{ repository }}" target="_blank" class="link-item">
                     <i class="fab fa-github"></i>
@@ -928,6 +933,230 @@ SOLUTION_TEMPLATE = """
             });
         }
     </script>
+</body>
+</html>
+"""
+
+SOURCE_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Source Code</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1d4ed8;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --code-background: #1e1e1e;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #3b82f6;
+                --secondary-color: #60a5fa;
+                --background-color: #0f172a;
+                --card-background: #1e293b;
+                --text-primary: #f1f5f9;
+                --text-secondary: #94a3b8;
+                --border-color: #334155;
+                --code-background: #1e1e1e;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            color: white;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+        }
+
+        .header-logo {
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .logo-image {
+            height: 80px;
+            width: auto;
+        }
+
+        .header-text {
+            flex-grow: 1;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .nav-bar {
+            background-color: var(--card-background);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+
+        .source-container {
+            background: var(--card-background);
+            border-radius: 1rem;
+            margin: 2rem 0;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .source-header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .source-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .download-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .download-button:hover {
+            background: var(--secondary-color);
+        }
+
+        pre[class*="language-"] {
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .code-wrapper {
+            max-height: 800px;
+            overflow-y: auto;
+            background: var(--code-background);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .logo-image {
+                height: 60px;
+            }
+
+            .header-title {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="../../index.html" class="header-logo">
+                <img src="../../icon_transparent.png" alt="{{ site_config.project_name }} Logo" class="logo-image">
+            </a>
+            <div class="header-text">
+                <h1 class="header-title">{{ title }} - Source Code</h1>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <div class="container">
+            <a href="./index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Script Details
+            </a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="source-container">
+            <div class="source-header">
+                <div class="source-title">{{ filename }}</div>
+                <a href="{{ download_url }}" download class="download-button">
+                    <i class="fas fa-download"></i>
+                    Download Source
+                </a>
+            </div>
+            <div class="code-wrapper">
+                <pre class="line-numbers"><code class="language-python">{{ source_code }}</code></pre>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 </body>
 </html>
 """
@@ -1326,11 +1555,26 @@ def generate_static_site(base_dir, static_dir):
                     base_url = SITE_CONFIG['base_url']
                     script_path = f"{entry.name}/{solution_name}/{most_recent_file}"
                     
+                    # Generate source code viewer page
+                    with open(file_path, 'r') as f:
+                        source_code = f.read()
+                    
+                    source_template_vars = {
+                        'title': metadata.get("title", solution_name),
+                        'filename': most_recent_file,
+                        'source_code': source_code,
+                        'download_url': f"{base_url}/{script_path}",
+                        'site_config': SITE_CONFIG
+                    }
+                    
+                    with open(os.path.join(solution_output, "source.html"), "w") as f:
+                        f.write(Template(SOURCE_TEMPLATE).render(**source_template_vars))
+                    
                     solution_metadata = {
                         "name": metadata.get("title", solution_name),
                         "description": metadata.get("description", "No description provided."),
                         "link": f"{entry.name}/{solution_name}",
-                        "cover": cover_image_path,  # Use consistent cover image path
+                        "cover": cover_image_path,
                         "author": metadata.get("author", ""),
                         "version": metadata.get("version", ""),
                         "external_source": metadata.get("external_source", ""),
@@ -1342,7 +1586,7 @@ def generate_static_site(base_dir, static_dir):
                         'title': solution_metadata["name"],
                         'project_name': SITE_CONFIG['project_name'],
                         'site_config': SITE_CONFIG,
-                        'cover_image': cover_image_path,  # Use same cover image path
+                        'cover_image': cover_image_path,
                         'description': solution_metadata["description"],
                         'author': metadata.get("author", ""),
                         'version': metadata.get("version", ""),
