@@ -212,7 +212,7 @@ INDEX_TEMPLATE = """
         }
 
         .logo-image {
-            height: 60px;
+            height: 80px;
             width: auto;
             display: block;
         }
@@ -704,7 +704,7 @@ SOLUTION_TEMPLATE = """
         }
 
         .logo-image {
-            height: 60px;
+            height: 80px;
             width: auto;
             display: block;
         }
