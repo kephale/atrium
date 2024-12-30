@@ -24,6 +24,7 @@ cd my-atrium
 
 - Go to repository Settings > Pages
 - Set source to GitHub Actions
+- Enable `Read and write permissions` under Settings > Actions > General
 
 3. Add your first script:
 
@@ -56,6 +57,12 @@ The following metadata is required in each `uv` script.
 # ]
 # ///
 ```
+
+## Purpose
+
+Atrium is intended to be a lightweight way of storing collections of single-file Python scripts. It borrows many ideas from [album](https://album.solutions/), but uses [uv](https://docs.astral.sh/uv/) to handle dependencies and execution and [typer](https://typer.tiangolo.com/) for CLI support. As a consequence, your code does not require any customizations for Atrium. Any single-file python script designed for uv can be added to your Atrium, then you can extend the metadata in your script to get the UI/web display you'd like.
+
+There are some next steps planned. Feel free to ping me if you're interested!
 
 ## Troubleshooting
 
